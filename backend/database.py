@@ -67,6 +67,12 @@ async def init_db():
                 print("💡 ACTION: Go to Supabase -> Settings -> Database -> Connection Pooling.")
                 print("💡 FIX: Use the 'Transaction' mode connection string (usually port 6543).")
             
+            # Specific hint for Supabase Pooler authentication issue
+            if "password authentication failed" in str(e).lower():
+                print("💡 HINT: 'password authentication failed' with Port 6543 usually means the username is wrong.")
+                print("💡 ACTION: When using the Pooler, the username MUST be 'postgres.[YOUR-PROJECT-REF]'.")
+                print("💡 FIX: Copy the exact 'Connection string' from Supabase Pooling settings.")
+            
             if attempt < max_retries:
                 print(f"🔄 Retrying in {retry_delay}s...")
                 await asyncio.sleep(retry_delay)
