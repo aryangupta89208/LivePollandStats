@@ -7,10 +7,12 @@ from config import get_settings
 settings = get_settings()
 logger = logging.getLogger(__name__)
 
-# Fix possible 'postgres://' (standard) to 'postgresql+asyncpg://' (async)
+# Fix possible 'postgres://' or 'postgresql://' to 'postgresql+asyncpg://'
 database_url = settings.DATABASE_URL
 if database_url.startswith("postgres://"):
     database_url = database_url.replace("postgres://", "postgresql+asyncpg://", 1)
+elif database_url.startswith("postgresql://") and "+asyncpg" not in database_url:
+    database_url = database_url.replace("postgresql://", "postgresql+asyncpg://", 1)
 
 # Mask sensitive info for logging
 db_host = database_url.split("@")[-1].split("/")[0] if "@" in database_url else "localhost"
@@ -27,6 +29,7 @@ if "localhost" not in database_url:
     # asyncpg uses 'ssl' parameter for SSL
     engine_args["connect_args"] = {"ssl": True}
 
+print(f"🛠️  Engine initialized for host: {db_host}")
 engine = create_async_engine(database_url, **engine_args)
 
 async_session = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)

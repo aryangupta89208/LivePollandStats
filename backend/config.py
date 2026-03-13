@@ -14,4 +14,18 @@ class Settings(BaseSettings):
 
 @lru_cache()
 def get_settings() -> Settings:
-    return Settings()
+    settings = Settings()
+    
+    # Diagnostics for Railway deployment
+    print("🛠️  Settings Diagnostic:")
+    if "localhost" in settings.DATABASE_URL:
+        print("  ⚠️ DATABASE_URL is using the default (localhost).")
+    else:
+        print(f"  ✅ DATABASE_URL loaded from environment (host: {settings.DATABASE_URL.split('@')[-1].split('/')[0] if '@' in settings.DATABASE_URL else 'unknown'})")
+        
+    if "localhost" in settings.REDIS_URL:
+        print("  ⚠️ REDIS_URL is using the default (localhost).")
+    else:
+        print(f"  ✅ REDIS_URL loaded from environment (host: {settings.REDIS_URL.split('@')[-1] if '@' in settings.REDIS_URL else 'unknown'})")
+        
+    return settings
