@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IPL Fan Battle - Admin</title>
+    <style>
+        :root {
+            --green: #0a7e3d;
+            --green-dark: #065a2b;
+            --yellow: #f5c518;
+            --bg: #0f1117;
+            --card: #1a1d27;
+            --text: #e8e8e8;
+            --text-dim: #888;
+            --border: #2a2d37;
+            --red: #e63946;
+            --blue: #4361ee;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+        .header {
+            background: linear-gradient(135deg, var(--green-dark), var(--green));
+            padding: 20px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .header h1 { font-size: 22px; display: flex; align-items: center; gap: 10px; }
+        .header h1::before { content: "🏏"; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 24px; }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        .stat-card {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--border);
+        }
+        .stat-card .label { font-size: 13px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
+        .stat-card .value { font-size: 32px; font-weight: 700; color: var(--yellow); margin-top: 8px; }
+
+        /* Auth */
+        .auth-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            align-items: center;
+        }
+        .auth-bar input {
+            flex: 1;
+            max-width: 300px;
+            padding: 10px 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--card);
+            color: var(--text);
+            font-size: 14px;
+        }
+        .auth-bar button {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            background: var(--green);
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .auth-bar .status { font-size: 13px; color: var(--text-dim); }
+        .auth-bar .status.ok { color: #4caf50; }
+
+        /* Create Poll */
+        .create-section {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid var(--border);
+            margin-bottom: 32px;
+        }
+        .create-section h2 { font-size: 18px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+        .form-row { display: flex; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+        .form-row input, .form-row select {
+            flex: 1;
+            min-width: 200px;
+            padding: 10px 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            color: var(--text);
+            font-size: 14px;
+        }
+        .btn {
+            padding: 10px 24px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: opacity 0.2s;
+        }
+        .btn:hover { opacity: 0.85; }
+        .btn-primary { background: var(--green); color: white; }
+        .btn-danger { background: var(--red); color: white; }
+        .btn-sm { padding: 6px 14px; font-size: 13px; }
+
+        /* Polls Table */
+        .polls-section h2 { font-size: 18px; margin-bottom: 16px; }
+        .poll-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--card);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .poll-table th {
+            text-align: left;
+            padding: 14px 16px;
+            background: var(--green-dark);
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .poll-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+        }
+        .poll-table tr:last-child td { border-bottom: none; }
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .badge.active { background: rgba(76, 175, 80, 0.2); color: #4caf50; }
+        .badge.closed { background: rgba(230, 57, 70, 0.2); color: #e63946; }
+        .actions { display: flex; gap: 8px; }
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            padding: 12px 24px;
+            border-radius: 8px;
+            background: var(--green);
+            color: white;
+            font-weight: 600;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 999;
+        }
+        .toast.show { transform: translateY(0); opacity: 1; }
+        .api-input { display: flex; gap: 8px; align-items: center; margin-bottom: 16px; }
+        .api-input label { font-size: 13px; color: var(--text-dim); white-space: nowrap; }
+        .api-input input { flex: 1; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border); background: var(--card); color: var(--text); font-size: 13px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>IPL Fan Battle — Admin Panel</h1>
+        <span id="connStatus" class="status">Not connected</span>
+    </div>
+
+    <div class="container">
+        <!-- API Config -->
+        <div class="api-input">
+            <label>API URL:</label>
+            <input type="text" id="apiUrl" value="" placeholder="http://localhost:8000">
+            <label>Admin Key:</label>
+            <input type="password" id="adminKey" placeholder="Enter admin key">
+            <button class="btn btn-primary btn-sm" onclick="connectAdmin()">Connect</button>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-card"><div class="label">Total Users</div><div class="value" id="statUsers">—</div></div>
+            <div class="stat-card"><div class="label">Total Polls</div><div class="value" id="statPolls">—</div></div>
+            <div class="stat-card"><div class="label">Total Votes</div><div class="value" id="statVotes">—</div></div>
+            <div class="stat-card"><div class="label">Active Polls</div><div class="value" id="statActive">—</div></div>
+        </div>
+
+        <!-- Create Poll -->
+        <div class="create-section">
+            <h2>📝 Create New Poll</h2>
+            <div class="form-row">
+                <input type="text" id="pollQuestion" placeholder="Poll question (e.g. Is Kohli the GOAT?)">
+            </div>
+            <div class="form-row">
+                <input type="text" id="pollOptionA" placeholder="Option A (default: Agree)" value="Agree">
+                <input type="text" id="pollOptionB" placeholder="Option B (default: Disagree)" value="Disagree">
+                <select id="pollCategory">
+                    <option value="hot_take">🔥 Hot Take</option>
+                    <option value="goat">🐐 GOAT Debate</option>
+                    <option value="team_battle">⚔️ Team Battle</option>
+                    <option value="player_battle">👤 Player Battle</option>
+                    <option value="prediction">🔮 Prediction</option>
+                    <option value="fun">🎉 Fun</option>
+                </select>
+                <button class="btn btn-primary" onclick="createPoll()">Create Poll</button>
+            </div>
+        </div>
+
+        <!-- Polls List -->
+        <div class="polls-section">
+            <h2>📊 All Polls</h2>
+            <table class="poll-table">
+                <thead>
+                    <tr>
+                        <th>Question</th>
+                        <th>Options</th>
+                        <th>Votes</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="pollsBody">
+                    <tr><td colspan="5" style="text-align:center; color:var(--text-dim);">Connect to load polls</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        let API_URL = '';
+        let ADMIN_KEY = '';
+
+        // Auto-detect API URL
+        (function() {
+            const loc = window.location;
+            if (loc.port) {
+                API_URL = `${loc.protocol}//${loc.hostname}:${loc.port}`;
+            } else {
+                API_URL = `${loc.protocol}//${loc.hostname}`;
+            }
+            document.getElementById('apiUrl').value = API_URL;
+        })();
+
+        function showToast(msg, isError = false) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.style.background = isError ? '#e63946' : '#0a7e3d';
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
+        }
+
+        async function apiCall(method, path, body = null) {
+            const opts = {
+                method,
+                headers: { 'Content-Type': 'application/json', 'x-admin-key': ADMIN_KEY },
+            };
+            if (body) opts.body = JSON.stringify(body);
+            const res = await fetch(`${API_URL}${path}`, opts);
+            if (!res.ok) {
+                const err = await res.json().catch(() => ({}));
+                throw new Error(err.detail || `HTTP ${res.status}`);
+            }
+            return res.json();
+        }
+
+        async function connectAdmin() {
+            API_URL = document.getElementById('apiUrl').value.replace(/\/$/, '');
+            ADMIN_KEY = document.getElementById('adminKey').value;
+            try {
+                await loadStats();
+                await loadPolls();
+                document.getElementById('connStatus').textContent = '✅ Connected';
+                document.getElementById('connStatus').classList.add('ok');
+                showToast('Connected successfully!');
+            } catch (e) {
+                showToast('Connection failed: ' + e.message, true);
+            }
+        }
+
+        async function loadStats() {
+            const stats = await apiCall('GET', '/admin/stats');
+            document.getElementById('statUsers').textContent = stats.total_users.toLocaleString();
+            document.getElementById('statPolls').textContent = stats.total_polls.toLocaleString();
+            document.getElementById('statVotes').textContent = stats.total_votes.toLocaleString();
+            document.getElementById('statActive').textContent = stats.active_polls.toLocaleString();
+        }
+
+        async function loadPolls() {
+            const polls = await apiCall('GET', '/admin/polls');
+            const tbody = document.getElementById('pollsBody');
+            if (polls.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-dim)">No polls yet</td></tr>';
+                return;
+            }
+            tbody.innerHTML = polls.map(p => `
+                <tr>
+                    <td>${escHtml(p.question)}</td>
+                    <td>${escHtml(p.option_a)} vs ${escHtml(p.option_b)}</td>
+                    <td>${p.total_votes.toLocaleString()}</td>
+                    <td><span class="badge ${p.active ? 'active' : 'closed'}">${p.active ? 'Active' : 'Closed'}</span></td>
+                    <td class="actions">
+                        <button class="btn btn-sm ${p.active ? 'btn-danger' : 'btn-primary'}" onclick="togglePoll('${p.id}', ${!p.active})">
+                            ${p.active ? 'Close' : 'Activate'}
+                        </button>
+                        <button class="btn btn-sm btn-danger" onclick="deletePoll('${p.id}')">Delete</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function createPoll() {
+            const question = document.getElementById('pollQuestion').value.trim();
+            if (!question) return showToast('Enter a question!', true);
+            try {
+                await apiCall('POST', '/admin/polls', {
+                    question,
+                    option_a: document.getElementById('pollOptionA').value || 'Agree',
+                    option_b: document.getElementById('pollOptionB').value || 'Disagree',
+                    category: document.getElementById('pollCategory').value,
+                });
+                document.getElementById('pollQuestion').value = '';
+                showToast('Poll created! 🏏');
+                await loadStats();
+                await loadPolls();
+            } catch (e) {
+                showToast('Error: ' + e.message, true);
+            }
+        }
+
+        async function togglePoll(id, active) {
+            try {
+                await apiCall('PUT', `/admin/polls/${id}`, { active });
+                showToast(active ? 'Poll activated!' : 'Poll closed!');
+                await loadStats();
+                await loadPolls();
+            } catch (e) {
+                showToast('Error: ' + e.message, true);
+            }
+        }
+
+        async function deletePoll(id) {
+            if (!confirm('Delete this poll?')) return;
+            try {
+                await apiCall('DELETE', `/admin/polls/${id}`);
+                showToast('Poll deleted!');
+                await loadStats();
+                await loadPolls();
+            } catch (e) {
+                showToast('Error: ' + e.message, true);
+            }
+        }
+
+        function escHtml(str) {
+            const d = document.createElement('div');
+            d.textContent = str;
+            return d.innerHTML;
+        }
+    </script>
+</body>
+</html>
