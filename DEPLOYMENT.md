@@ -15,6 +15,7 @@ Flutter App → FastAPI (Railway) → PostgreSQL (Supabase) + Redis (Railway)
 2. Go to **SQL Editor** → Paste contents of `backend/schema.sql` → Run
 3. Go to **Settings → Database** → Copy the connection string
 4. Format: `postgresql+asyncpg://postgres:[PASSWORD]@db.[REF].supabase.co:5432/postgres`
+5. **SSL Requirement**: The app now automatically handles SSL for Supabase. Ensure your connection string starts with `postgresql+asyncpg://`.
 
 ---
 

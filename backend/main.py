@@ -18,8 +18,18 @@ from routes.admin import router as admin_router
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup
-    await init_db()
-    await init_redis()
+    try:
+        await init_db()
+    except Exception as e:
+        print(f"❌ Database initialization failed: {e}")
+        # We don't raise here to allow the app to start and potentially pass healthchecks
+        # although it will be in a degraded state.
+    
+    try:
+        await init_redis()
+    except Exception as e:
+        print(f"❌ Redis initialization failed: {e}")
+
     print("🏏 IPL Fan Battle API is live!")
     yield
     # Shutdown
