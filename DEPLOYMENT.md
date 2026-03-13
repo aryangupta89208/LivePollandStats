@@ -14,8 +14,12 @@ Flutter App → FastAPI (Railway) → PostgreSQL (Supabase) + Redis (Railway)
 1. Go to [supabase.com](https://supabase.com) → Create a new project
 2. Go to **SQL Editor** → Paste contents of `backend/schema.sql` → Run
 3. Go to **Settings → Database** → Copy the connection string
-4. Format: `postgresql+asyncpg://postgres:[PASSWORD]@db.[REF].supabase.co:5432/postgres`
-5. **SSL Requirement**: The app now automatically handles SSL for Supabase. Ensure your connection string starts with `postgresql+asyncpg://`.
+4. **Critical for Railway**: Use the **Connection Pooler** string instead of the direct one.
+   - Go to **Settings -> Database -> Connection Pooling**.
+   - Copy the connection string for **Transaction** mode.
+   - It should use port **6543**.
+5. Format: `postgresql+asyncpg://postgres.[REF]:[PASSWORD]@aws-0-[REGION].pooler.supabase.com:6543/postgres`
+6. **Why?**: Direct connection (port 5432) often uses IPv6, which Railway does not yet support for outbound traffic, leading to "Network is unreachable" errors.
 
 ---
 

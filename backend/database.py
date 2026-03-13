@@ -26,8 +26,8 @@ engine_args = {
 }
 
 if "localhost" not in database_url:
-    # asyncpg uses 'ssl' parameter for SSL
-    engine_args["connect_args"] = {"ssl": True}
+    # Use 'require' mode for asyncpg to work with Supabase poolers without strictly verifying the CA chain
+    engine_args["connect_args"] = {"ssl": "require"}
 
 print(f"🛠️  Engine initialized for host: {db_host}")
 engine = create_async_engine(database_url, **engine_args)
@@ -60,6 +60,13 @@ async def init_db():
             return
         except Exception as e:
             print(f"❌ Database connection failed: {e}")
+            
+            # Specific hint for Railway + Supabase IPv6 issue
+            if "101" in str(e) or "Network is unreachable" in str(e):
+                print("💡 HINT: 'Network is unreachable' often means the database is IPv6-only.")
+                print("💡 ACTION: Go to Supabase -> Settings -> Database -> Connection Pooling.")
+                print("💡 FIX: Use the 'Transaction' mode connection string (usually port 6543).")
+            
             if attempt < max_retries:
                 print(f"🔄 Retrying in {retry_delay}s...")
                 await asyncio.sleep(retry_delay)
