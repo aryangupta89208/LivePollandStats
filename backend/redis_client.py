@@ -8,6 +8,11 @@ redis_client: redis.Redis = None
 
 async def init_redis():
     global redis_client
+    
+    # Mask sensitive info for logging
+    redis_host = settings.REDIS_URL.split("@")[-1] if "@" in settings.REDIS_URL else "localhost:6379"
+    
+    print(f"📡 Connecting to Redis ({redis_host})...")
     redis_client = redis.from_url(
         settings.REDIS_URL,
         encoding="utf-8",
@@ -17,9 +22,9 @@ async def init_redis():
     )
     try:
         await redis_client.ping()
-        print("✅ Redis connected")
+        print(f"✅ Redis connected ({redis_host})")
     except Exception as e:
-        print(f"⚠️ Redis connection failed: {e}. Running without cache.")
+        print(f"⚠️ Redis connection failed ({redis_host}): {e}. Running without cache.")
         redis_client = None
 
 

@@ -7,6 +7,14 @@ from config import get_settings
 settings = get_settings()
 logger = logging.getLogger(__name__)
 
+# Fix possible 'postgres://' (standard) to 'postgresql+asyncpg://' (async)
+database_url = settings.DATABASE_URL
+if database_url.startswith("postgres://"):
+    database_url = database_url.replace("postgres://", "postgresql+asyncpg://", 1)
+
+# Mask sensitive info for logging
+db_host = database_url.split("@")[-1].split("/")[0] if "@" in database_url else "localhost"
+
 # Use SSL for Supabase (production)
 engine_args = {
     "echo": False,
@@ -15,11 +23,11 @@ engine_args = {
     "pool_pre_ping": True,
 }
 
-if "localhost" not in settings.DATABASE_URL:
+if "localhost" not in database_url:
     # asyncpg uses 'ssl' parameter for SSL
     engine_args["connect_args"] = {"ssl": True}
 
-engine = create_async_engine(settings.DATABASE_URL, **engine_args)
+engine = create_async_engine(database_url, **engine_args)
 
 async_session = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
@@ -42,7 +50,7 @@ async def init_db():
     
     for attempt in range(1, max_retries + 1):
         try:
-            print(f"📡 Connecting to database... (Attempt {attempt}/{max_retries})")
+            print(f"📡 Connecting to database ({db_host})... (Attempt {attempt}/{max_retries})")
             async with engine.begin() as conn:
                 await conn.run_sync(Base.metadata.create_all)
             print("✅ Database connected and schema verified.")
