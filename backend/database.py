@@ -61,6 +61,14 @@ async def init_db():
             print(f"📡 Connecting to database ({db_host})... (Attempt {attempt}/{max_retries})")
             async with engine.begin() as conn:
                 await conn.run_sync(Base.metadata.create_all)
+            
+            # Auto-seed if empty
+            try:
+                from seed import seed
+                await seed()
+            except Exception as seed_err:
+                print(f"⚠️  Auto-seed skipped/failed: {seed_err}")
+
             print("✅ Database connected and schema verified.")
             return
         except Exception as e:

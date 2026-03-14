@@ -5,9 +5,7 @@ import '../models/poll_model.dart';
 import '../models/user_model.dart';
 
 class ApiService {
-  // Change this to your Railway URL after deployment
-  static const String baseUrl = 'http://10.0.2.2:8000'; // Android emulator
-  // static const String baseUrl = 'http://localhost:8000'; // Web/iOS
+  static const String baseUrl = 'https://livepollandstats-production.up.railway.app';
 
   static final Map<String, String> _headers = {
     'Content-Type': 'application/json',

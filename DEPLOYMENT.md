@@ -14,13 +14,13 @@ Flutter App → FastAPI (Railway) → PostgreSQL (Supabase) + Redis (Railway)
 1. Go to [supabase.com](https://supabase.com) → Create a new project
 2. Go to **SQL Editor** → Paste contents of `backend/schema.sql` → Run
 3. Go to **Settings → Database** → Copy the connection string
-4. **Critical for Railway**: Use the **Connection Pooler** string instead of the direct one.
+4. **Critical for Railway**: Use the **Connection Pooler** string but in **Session** mode for asyncpg compatibility.
    - Go to **Settings -> Database -> Connection Pooling**.
-   - Copy the connection string for **Transaction** mode.
-   - It should use port **6543**.
+   - Copy the connection string for **Session** mode.
+   - It should use port **5432** but with a host like `aws-0-[REGION].pooler.supabase.com`.
    - **IMPORTANT**: If your password contains special characters like `@`, you MUST URL-encode them. (e.g., `@` becomes `%40`). So `MyP@ssword` becomes `MyP%40ssword`.
-5. Format: `postgresql+asyncpg://postgres.[REF]:[PASSWORD]@aws-0-[REGION].pooler.supabase.com:6543/postgres`
-6. **Why?**: Direct connection (port 5432) often uses IPv6, which Railway does not yet support for outbound traffic, leading to "Network is unreachable" errors.
+5. Format: `postgresql+asyncpg://postgres.[REF]:[PASSWORD]@aws-0-[REGION].pooler.supabase.com:5432/postgres`
+6. **Why Session Mode on the Pooler?**: Direct connection (db.supabase.co) uses IPv6, which Railway does not support, causing "Network Unreachable". The pooler domain supports IPv4. However, the default pooler port (6543, Transaction mode) breaks FastAPI's `asyncpg` driver. Port 5432 on the pooler domain gives us both IPv4 and asyncpg compatibility!
 
 ---
 
