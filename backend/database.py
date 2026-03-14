@@ -28,7 +28,7 @@ engine_args = {
         # Supavisor/PgBouncer Transaction mode doesn't support session-level prepared statements
         "prepared_statement_cache_size": 0,
         "statement_cache_size": 0,
-        "prepared_statement_name_func": lambda i: f"__asyncpg_{uuid.uuid4().hex}_{i}__",
+        "prepared_statement_name_func": lambda *args: f"__asyncpg_{uuid.uuid4().hex}__",
     }
 }
 
