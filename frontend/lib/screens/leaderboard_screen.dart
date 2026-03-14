@@ -53,31 +53,31 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0A0E17),
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white),
+          icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.black87),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: const Text(
           'Leaderboard',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
+          style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
         ),
         bottom: TabBar(
           controller: _tabController,
-          indicatorColor: const Color(0xFFF5C518),
+          indicatorColor: const Color(0xFF2E7D32),
           indicatorWeight: 3,
-          labelColor: const Color(0xFFF5C518),
-          unselectedLabelColor: Colors.white54,
-          labelStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+          labelColor: const Color(0xFF2E7D32),
+          unselectedLabelColor: Colors.grey.shade400,
+          labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
           tabs: _periodLabels.map((l) => Tab(text: l)).toList(),
         ),
       ),
       body: _isLoading
           ? const Center(
-              child: CircularProgressIndicator(color: Color(0xFF4CAF50)),
+              child: CircularProgressIndicator(color: Color(0xFF2E7D32)),
             )
           : _entries.isEmpty
               ? Center(
@@ -90,7 +90,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
                         'No fans on the board yet!\nBe the first to vote.',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.5),
+                          color: Colors.grey.shade400,
                           fontSize: 16,
                         ),
                       ),
@@ -110,23 +110,17 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
     final medals = ['🥇', '🥈', '🥉'];
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 10),
+      margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
-        gradient: isTop3
-            ? LinearGradient(
-                colors: [
-                  _getRankColor(index).withValues(alpha: 0.15),
-                  const Color(0xFF1A1D2E),
-                ],
-              )
-            : null,
-        color: isTop3 ? null : const Color(0xFF1A1D2E),
+        color: isTop3 
+            ? _getRankColor(index).withValues(alpha: 0.05)
+            : Colors.grey.shade50,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
           color: isTop3
               ? _getRankColor(index).withValues(alpha: 0.3)
-              : Colors.white.withValues(alpha: 0.06),
+              : Colors.grey.shade200,
         ),
       ),
       child: Row(
@@ -140,8 +134,8 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
                     '${entry.rank}',
                     style: TextStyle(
                       fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white.withValues(alpha: 0.4),
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey.shade400,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -152,7 +146,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
             width: 42,
             height: 42,
             decoration: BoxDecoration(
-              color: _getTeamColor(entry.favoriteTeam).withValues(alpha: 0.2),
+              color: _getTeamColor(entry.favoriteTeam).withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Center(
@@ -175,8 +169,8 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
                 Text(
                   '${entry.favoriteTeam} Fan',
                   style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                    fontWeight: FontWeight.bold,
                     fontSize: 14,
                   ),
                 ),
@@ -185,7 +179,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
                   '${entry.totalVotes} votes • ${entry.accuracy.toStringAsFixed(0)}% accuracy',
                   style: TextStyle(
                     fontSize: 12,
-                    color: Colors.white.withValues(alpha: 0.4),
+                    color: Colors.grey.shade500,
                   ),
                 ),
               ],
@@ -202,15 +196,15 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
                   fontWeight: FontWeight.w900,
                   color: isTop3
                       ? _getRankColor(index)
-                      : const Color(0xFFF5C518),
+                      : const Color(0xFFF9A825),
                 ),
               ),
               Text(
                 'FAN IQ',
                 style: TextStyle(
                   fontSize: 9,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.white.withValues(alpha: 0.3),
+                  fontWeight: FontWeight.w800,
+                  color: Colors.grey.shade400,
                   letterSpacing: 1,
                 ),
               ),

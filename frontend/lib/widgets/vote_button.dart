@@ -65,11 +65,11 @@ class _VoteButtonState extends State<VoteButton>
           padding: const EdgeInsets.symmetric(vertical: 14),
           decoration: BoxDecoration(
             color: _isPressed
-                ? widget.color.withValues(alpha: 0.3)
-                : widget.color.withValues(alpha: 0.12),
-            borderRadius: BorderRadius.circular(14),
+                ? widget.color.withValues(alpha: 0.1)
+                : widget.color.withValues(alpha: 0.05),
+            borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: widget.color.withValues(alpha: _isPressed ? 0.8 : 0.3),
+              color: widget.color.withValues(alpha: _isPressed ? 0.6 : 0.2),
               width: 1.5,
             ),
           ),

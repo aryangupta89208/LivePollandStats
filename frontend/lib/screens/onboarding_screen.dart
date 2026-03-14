@@ -85,167 +85,143 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0A0E17),
-      body: FadeTransition(
-        opacity: _fadeAnimation,
-        child: SafeArea(
-          child: Column(
-            children: [
-              const SizedBox(height: 32),
-              // Header
-              const Text(
-                '🏏',
-                style: TextStyle(fontSize: 48),
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: Column(
+          children: [
+            const SizedBox(height: 48),
+            // Header
+            const Text(
+              '🏏',
+              style: TextStyle(fontSize: 56),
+            ),
+            const SizedBox(height: 12),
+            const Text(
+              'IPL Fan Battle',
+              style: TextStyle(
+                fontSize: 32,
+                fontWeight: FontWeight.w900,
+                color: Color(0xFF1B5E20),
+                letterSpacing: -0.5,
               ),
-              const SizedBox(height: 12),
-              ShaderMask(
-                shaderCallback: (bounds) => const LinearGradient(
-                  colors: [Color(0xFF4CAF50), Color(0xFFF5C518)],
-                ).createShader(bounds),
-                child: const Text(
-                  'IPL Fan Battle',
-                  style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.w900,
-                    color: Colors.white,
-                    letterSpacing: -0.5,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Choose your favorite team',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey.shade600,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(height: 40),
+
+            // Team Grid
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: GridView.builder(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    childAspectRatio: 2.4,
+                    crossAxisSpacing: 12,
+                    mainAxisSpacing: 12,
                   ),
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Choose your team to get started',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.white.withValues(alpha: 0.6),
-                ),
-              ),
-              const SizedBox(height: 32),
+                  itemCount: teams.length,
+                  itemBuilder: (context, index) {
+                    final team = teams[index];
+                    final isSelected = _selectedTeam == team['name'] as String;
+                    final color = Color(team['color'] as int);
 
-              // Team Grid
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: GridView.builder(
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      childAspectRatio: 2.2,
-                      crossAxisSpacing: 12,
-                      mainAxisSpacing: 12,
-                    ),
-                    itemCount: teams.length,
-                    itemBuilder: (context, index) {
-                      final team = teams[index];
-                      final isSelected =
-                          _selectedTeam == team['name'] as String;
-                      final color = Color(team['color'] as int);
-
-                      return GestureDetector(
-                        onTap: () {
-                          HapticFeedback.selectionClick();
-                          setState(() => _selectedTeam = team['name'] as String);
-                        },
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 250),
-                          curve: Curves.easeOutCubic,
-                          decoration: BoxDecoration(
+                    return GestureDetector(
+                      onTap: () {
+                        HapticFeedback.selectionClick();
+                        setState(() => _selectedTeam = team['name'] as String);
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? color.withValues(alpha: 0.1)
+                              : Colors.grey.shade50,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
                             color: isSelected
-                                ? color.withValues(alpha: 0.25)
-                                : const Color(0xFF1A1D2E),
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(
-                              color: isSelected
-                                  ? color
-                                  : Colors.white.withValues(alpha: 0.08),
-                              width: isSelected ? 2.5 : 1,
-                            ),
-                            boxShadow: isSelected
-                                ? [
-                                    BoxShadow(
-                                      color: color.withValues(alpha: 0.3),
-                                      blurRadius: 16,
-                                      spreadRadius: -2,
-                                    ),
-                                  ]
-                                : [],
-                          ),
-                          child: Center(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  team['short'] as String,
-                                  style: TextStyle(
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.w900,
-                                    color: isSelected
-                                        ? color
-                                        : Colors.white.withValues(alpha: 0.9),
-                                    letterSpacing: 1,
-                                  ),
-                                ),
-                                const SizedBox(height: 2),
-                                Text(
-                                  team['name'] as String,
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    color: Colors.white.withValues(alpha: 0.5),
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ],
-                            ),
+                                ? color
+                                : Colors.grey.shade200,
+                            width: isSelected ? 2 : 1,
                           ),
                         ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-
-              // Continue Button
-              Padding(
-                padding: const EdgeInsets.all(20),
-                child: SizedBox(
-                  width: double.infinity,
-                  height: 56,
-                  child: ElevatedButton(
-                    onPressed: _selectedTeam != null && !_isLoading
-                        ? _continue
-                        : null,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF4CAF50),
-                      disabledBackgroundColor: const Color(0xFF1A1D2E),
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      elevation: _selectedTeam != null ? 8 : 0,
-                      shadowColor: const Color(0xFF4CAF50).withValues(alpha: 0.4),
-                    ),
-                    child: _isLoading
-                        ? const SizedBox(
-                            width: 24,
-                            height: 24,
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
-                              strokeWidth: 2.5,
-                            ),
-                          )
-                        : const Text(
-                            'LET\'S GO! 🏏',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w800,
-                              letterSpacing: 1,
-                            ),
+                        child: Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                team['short'] as String,
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w900,
+                                  color: isSelected ? color : Colors.black87,
+                                ),
+                              ),
+                              Text(
+                                team['name'] as String,
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: Colors.grey.shade500,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                textAlign: TextAlign.center,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
                           ),
-                  ),
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ),
-            ],
-          ),
+            ),
+
+            // Continue Button
+            Padding(
+              padding: const EdgeInsets.all(24),
+              child: SizedBox(
+                width: double.infinity,
+                height: 56,
+                child: ElevatedButton(
+                  onPressed: _selectedTeam != null && !_isLoading ? _continue : null,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF2E7D32),
+                    disabledBackgroundColor: Colors.grey.shade200,
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: _isLoading
+                      ? const SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : const Text(
+                          'START PLAYING',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 1,
+                          ),
+                        ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

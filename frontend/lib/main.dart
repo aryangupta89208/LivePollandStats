@@ -10,9 +10,9 @@ void main() {
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
-    statusBarIconBrightness: Brightness.light,
-    systemNavigationBarColor: Color(0xFF0A0E17),
-    systemNavigationBarIconBrightness: Brightness.light,
+    statusBarIconBrightness: Brightness.dark,
+    systemNavigationBarColor: Colors.white,
+    systemNavigationBarIconBrightness: Brightness.dark,
   ));
   runApp(const IPLFanBattleApp());
 }
@@ -26,21 +26,27 @@ class IPLFanBattleApp extends StatelessWidget {
       title: 'IPL Fan Battle',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        brightness: Brightness.dark,
-        scaffoldBackgroundColor: const Color(0xFF0A0E17),
-        primaryColor: const Color(0xFF4CAF50),
-        colorScheme: const ColorScheme.dark(
-          primary: Color(0xFF4CAF50),
-          secondary: Color(0xFFF5C518),
-          surface: Color(0xFF1A1D2E),
+        brightness: Brightness.light,
+        scaffoldBackgroundColor: Colors.white,
+        primaryColor: const Color(0xFF2E7D32),
+        colorScheme: ColorScheme.light(
+          primary: const Color(0xFF2E7D32),
+          secondary: const Color(0xFFF9A825),
+          surface: Colors.grey.shade50,
         ),
         textTheme: GoogleFonts.interTextTheme(
-          ThemeData.dark().textTheme,
+          ThemeData.light().textTheme,
         ),
         appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.transparent,
+          backgroundColor: Colors.white,
           elevation: 0,
           centerTitle: true,
+          iconTheme: IconThemeData(color: Colors.black87),
+          titleTextStyle: TextStyle(
+            color: Colors.black87,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         splashColor: const Color(0xFF4CAF50).withValues(alpha: 0.1),
         highlightColor: const Color(0xFF4CAF50).withValues(alpha: 0.05),

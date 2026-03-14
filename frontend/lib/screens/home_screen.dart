@@ -117,7 +117,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0A0E17),
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: Column(
           children: [
@@ -132,47 +132,35 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        ShaderMask(
-                          shaderCallback: (bounds) => const LinearGradient(
-                            colors: [Color(0xFF4CAF50), Color(0xFFF5C518)],
-                          ).createShader(bounds),
-                          child: const Text(
-                            'IPL Fan Battle',
-                            style: TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.w900,
-                              color: Colors.white,
-                            ),
+                        const Text(
+                          'IPL Fan Battle',
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.w900,
+                            color: Color(0xFF1B5E20),
                           ),
                         ),
-                        AnimatedBuilder(
-                          animation: _pulseController,
-                          builder: (_, _) => Row(
-                            children: [
-                              Container(
-                                width: 6,
-                                height: 6,
-                                decoration: BoxDecoration(
-                                  color: Color.lerp(
-                                    const Color(0xFF4CAF50),
-                                    const Color(0xFF81C784),
-                                    _pulseController.value,
-                                  ),
-                                  shape: BoxShape.circle,
-                                ),
+                        Row(
+                          children: [
+                            Container(
+                              width: 6,
+                              height: 6,
+                              decoration: const BoxDecoration(
+                                color: Color(0xFF4CAF50),
+                                shape: BoxShape.circle,
                               ),
-                              const SizedBox(width: 6),
-                              Text(
-                                'LIVE',
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w700,
-                                  color: const Color(0xFF4CAF50).withValues(alpha: 0.8),
-                                  letterSpacing: 2,
-                                ),
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              'LIVE POLLS',
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w800,
+                                color: Colors.grey.shade600,
+                                letterSpacing: 1,
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -184,13 +172,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.08),
+                        color: Colors.grey.shade100,
                         borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: Colors.grey.shade200),
                       ),
                       child: Text(
                         _getTeamShort(_userTeam!),
                         style: const TextStyle(
-                          color: Color(0xFFF5C518),
+                          color: Color(0xFFE65100),
                           fontWeight: FontWeight.w800,
                           fontSize: 13,
                         ),
@@ -205,7 +194,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               child: _isLoading
                   ? const Center(
                       child: CircularProgressIndicator(
-                        color: Color(0xFF4CAF50),
+                        color: Color(0xFF2E7D32),
                       ),
                     )
                   : _polls.isEmpty
@@ -219,7 +208,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                 'No polls yet!\nCheck back soon.',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                  color: Colors.white.withValues(alpha: 0.5),
+                                  color: Colors.grey.shade400,
                                   fontSize: 16,
                                 ),
                               ),
@@ -227,11 +216,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           ),
                         )
                       : RefreshIndicator(
-                          color: const Color(0xFF4CAF50),
-                          backgroundColor: const Color(0xFF1A1D2E),
+                          color: const Color(0xFF2E7D32),
+                          backgroundColor: Colors.white,
                           onRefresh: _loadPolls,
                           child: ListView.builder(
-                            padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
+                            padding: const EdgeInsets.fromLTRB(16, 8, 16, 110),
                             itemCount: _polls.length,
                             itemBuilder: (_, i) {
                               return PollCard(
@@ -260,9 +249,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          color: const Color(0xFF12151F),
+          color: Colors.white,
           border: Border(
-            top: BorderSide(color: Colors.white.withValues(alpha: 0.05)),
+            top: BorderSide(color: Colors.grey.shade200),
           ),
         ),
         child: BottomNavigationBar(
@@ -281,8 +270,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           },
           backgroundColor: Colors.transparent,
           elevation: 0,
-          selectedItemColor: const Color(0xFF4CAF50),
-          unselectedItemColor: Colors.white.withValues(alpha: 0.4),
+          selectedItemColor: const Color(0xFF2E7D32),
+          unselectedItemColor: Colors.grey.shade400,
           selectedFontSize: 12,
           unselectedFontSize: 12,
           type: BottomNavigationBarType.fixed,

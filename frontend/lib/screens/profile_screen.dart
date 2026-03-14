@@ -52,27 +52,27 @@ class _ProfileScreenState extends State<ProfileScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0A0E17),
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white),
+          icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.black87),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: const Text(
           'Profile',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
+          style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
         ),
       ),
       body: _isLoading
           ? const Center(
-              child: CircularProgressIndicator(color: Color(0xFF4CAF50)),
+              child: CircularProgressIndicator(color: Color(0xFF2E7D32)),
             )
           : _user == null
               ? const Center(
                   child: Text('Unable to load profile',
-                      style: TextStyle(color: Colors.white54)),
+                      style: TextStyle(color: Colors.black54)),
                 )
               : FadeTransition(
                   opacity: CurvedAnimation(
@@ -89,21 +89,18 @@ class _ProfileScreenState extends State<ProfileScreen>
                           width: 100,
                           height: 100,
                           decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                _getTeamColor(_user!.favoriteTeam),
-                                _getTeamColor(_user!.favoriteTeam)
-                                    .withValues(alpha: 0.5),
-                              ],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ),
+                            color: _getTeamColor(_user!.favoriteTeam),
                             shape: BoxShape.circle,
+                            border: Border.all(
+                              color: Colors.white,
+                              width: 4,
+                            ),
                             boxShadow: [
                               BoxShadow(
                                 color: _getTeamColor(_user!.favoriteTeam)
-                                    .withValues(alpha: 0.3),
-                                blurRadius: 24,
+                                    .withValues(alpha: 0.2),
+                                blurRadius: 20,
+                                offset: const Offset(0, 8),
                               ),
                             ],
                           ),
@@ -123,15 +120,15 @@ class _ProfileScreenState extends State<ProfileScreen>
                           _user!.favoriteTeam,
                           style: const TextStyle(
                             fontSize: 18,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
                           ),
                         ),
                         const SizedBox(height: 4),
                         Text(
                           'Fan since joining 🏏',
                           style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.5),
+                            color: Colors.grey.shade500,
                             fontSize: 14,
                           ),
                         ),
@@ -145,7 +142,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                                 'FAN IQ',
                                 _user!.formattedFanIq,
                                 '⚡',
-                                const Color(0xFFF5C518),
+                                const Color(0xFFF9A825),
                               ),
                             ),
                             const SizedBox(width: 12),
@@ -154,7 +151,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                                 'VOTES',
                                 _user!.totalVotes.toString(),
                                 '🗳️',
-                                const Color(0xFF4CAF50),
+                                const Color(0xFF2E7D32),
                               ),
                             ),
                           ],
@@ -167,7 +164,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                                 'ACCURACY',
                                 '${_user!.accuracy.toStringAsFixed(1)}%',
                                 '🎯',
-                                const Color(0xFF2196F3),
+                                const Color(0xFF1976D2),
                               ),
                             ),
                             const SizedBox(width: 12),
@@ -176,7 +173,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                                 'CORRECT',
                                 _user!.correctPredictions.toString(),
                                 '✅',
-                                const Color(0xFF66BB6A),
+                                const Color(0xFF43A047),
                               ),
                             ),
                           ],
@@ -188,10 +185,10 @@ class _ProfileScreenState extends State<ProfileScreen>
                           width: double.infinity,
                           padding: const EdgeInsets.all(20),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF1A1D2E),
+                            color: Colors.grey.shade50,
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
-                              color: Colors.white.withValues(alpha: 0.06),
+                              color: Colors.grey.shade200,
                             ),
                           ),
                           child: Column(
@@ -204,16 +201,16 @@ class _ProfileScreenState extends State<ProfileScreen>
                                   const Text(
                                     'Fan IQ Level',
                                     style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w700,
+                                      color: Colors.black87,
+                                      fontWeight: FontWeight.bold,
                                       fontSize: 16,
                                     ),
                                   ),
                                   Text(
                                     _getFanLevel(_user!.fanIq),
                                     style: const TextStyle(
-                                      color: Color(0xFFF5C518),
-                                      fontWeight: FontWeight.w800,
+                                      color: Color(0xFFF9A825),
+                                      fontWeight: FontWeight.w900,
                                       fontSize: 14,
                                     ),
                                   ),
@@ -224,10 +221,9 @@ class _ProfileScreenState extends State<ProfileScreen>
                                 borderRadius: BorderRadius.circular(6),
                                 child: LinearProgressIndicator(
                                   value: (_user!.fanIq % 1000) / 1000,
-                                  backgroundColor:
-                                      Colors.white.withValues(alpha: 0.08),
+                                  backgroundColor: Colors.grey.shade200,
                                   valueColor: const AlwaysStoppedAnimation(
-                                    Color(0xFFF5C518),
+                                    Color(0xFFF9A825),
                                   ),
                                   minHeight: 10,
                                 ),
@@ -236,7 +232,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                               Text(
                                 '${_user!.fanIq % 1000}/1000 to next level',
                                 style: TextStyle(
-                                  color: Colors.white.withValues(alpha: 0.4),
+                                  color: Colors.grey.shade500,
                                   fontSize: 12,
                                 ),
                               ),
@@ -254,9 +250,16 @@ class _ProfileScreenState extends State<ProfileScreen>
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: const Color(0xFF1A1D2E),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.06)),
+        border: Border.all(color: Colors.grey.shade100),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -266,7 +269,7 @@ class _ProfileScreenState extends State<ProfileScreen>
           Text(
             value,
             style: TextStyle(
-              fontSize: 28,
+              fontSize: 24,
               fontWeight: FontWeight.w900,
               color: color,
             ),
@@ -275,10 +278,10 @@ class _ProfileScreenState extends State<ProfileScreen>
           Text(
             label,
             style: TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.w600,
-              color: Colors.white.withValues(alpha: 0.4),
-              letterSpacing: 1.5,
+              fontSize: 10,
+              fontWeight: FontWeight.w800,
+              color: Colors.grey.shade500,
+              letterSpacing: 1.2,
             ),
           ),
         ],

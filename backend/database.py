@@ -1,5 +1,6 @@
 import logging
 import asyncio
+import uuid
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 from sqlalchemy.orm import DeclarativeBase
 from config import get_settings
@@ -24,9 +25,10 @@ engine_args = {
     "max_overflow": 5,     # Reduced max burst
     "pool_pre_ping": True, # Keep connection health checks
     "connect_args": {
-        # Supavisor Transaction mode doesn't support session-level prepared statements
+        # Supavisor/PgBouncer Transaction mode doesn't support session-level prepared statements
         "prepared_statement_cache_size": 0,
         "statement_cache_size": 0,
+        "prepared_statement_name_func": lambda i: f"__asyncpg_{uuid.uuid4().hex}_{i}__",
     }
 }
 

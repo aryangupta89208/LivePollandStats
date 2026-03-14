@@ -90,7 +90,7 @@ class _PercentageBarState extends State<PercentageBar>
                 Container(
                   height: 48,
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.05),
+                    color: Colors.grey.shade100,
                   ),
                 ),
                 // Fill
@@ -99,12 +99,7 @@ class _PercentageBarState extends State<PercentageBar>
                   child: Container(
                     height: 48,
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          widget.color.withValues(alpha: 0.3),
-                          widget.color.withValues(alpha: 0.15),
-                        ],
-                      ),
+                      color: widget.color.withValues(alpha: 0.2),
                     ),
                   ),
                 ),
@@ -131,10 +126,10 @@ class _PercentageBarState extends State<PercentageBar>
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight:
-                                  widget.isSelected ? FontWeight.w800 : FontWeight.w600,
+                                  widget.isSelected ? FontWeight.bold : FontWeight.w600,
                               color: widget.isSelected
                                   ? widget.color
-                                  : Colors.white.withValues(alpha: 0.8),
+                                  : Colors.grey.shade800,
                             ),
                           ),
                         ],

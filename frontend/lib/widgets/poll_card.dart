@@ -73,17 +73,17 @@ class _PollCardState extends State<PollCard>
             margin: const EdgeInsets.only(bottom: 16),
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: const Color(0xFF1A1D2E),
-              borderRadius: BorderRadius.circular(20),
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: hasVoted
-                    ? const Color(0xFF4CAF50).withValues(alpha: 0.2)
-                    : Colors.white.withValues(alpha: 0.06),
+                    ? const Color(0xFF2E7D32).withValues(alpha: 0.2)
+                    : Colors.grey.shade200,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.2),
-                  blurRadius: 12,
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
               ],
@@ -101,16 +101,16 @@ class _PollCardState extends State<PollCard>
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF5C518).withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(8),
+                        color: Colors.grey.shade100,
+                        borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
                         '${poll.categoryEmoji} ${poll.categoryLabel}',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.w700,
-                          color: Color(0xFFF5C518),
-                          letterSpacing: 1,
+                          color: Colors.grey.shade700,
+                          letterSpacing: 0.5,
                         ),
                       ),
                     ),
@@ -121,8 +121,8 @@ class _PollCardState extends State<PollCard>
                           vertical: 4,
                         ),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF4CAF50).withValues(alpha: 0.15),
-                          borderRadius: BorderRadius.circular(8),
+                          color: const Color(0xFF2E7D32).withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(6),
                         ),
                         child: const Row(
                           mainAxisSize: MainAxisSize.min,
@@ -130,7 +130,7 @@ class _PollCardState extends State<PollCard>
                             Icon(
                               Icons.check_circle_rounded,
                               size: 12,
-                              color: Color(0xFF4CAF50),
+                              color: Color(0xFF2E7D32),
                             ),
                             SizedBox(width: 4),
                             Text(
@@ -138,7 +138,7 @@ class _PollCardState extends State<PollCard>
                               style: TextStyle(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w700,
-                                color: Color(0xFF4CAF50),
+                                color: Color(0xFF2E7D32),
                                 letterSpacing: 0.5,
                               ),
                             ),
@@ -154,8 +154,8 @@ class _PollCardState extends State<PollCard>
                   poll.question,
                   style: const TextStyle(
                     fontSize: 18,
-                    fontWeight: FontWeight.w800,
-                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
                     height: 1.3,
                   ),
                 ),
@@ -166,14 +166,14 @@ class _PollCardState extends State<PollCard>
                   PercentageBar(
                     label: poll.optionA,
                     percentage: poll.percentageA,
-                    color: const Color(0xFF4CAF50),
+                    color: const Color(0xFF2E7D32),
                     isSelected: poll.userVote == 'a',
                   ),
                   const SizedBox(height: 10),
                   PercentageBar(
                     label: poll.optionB,
                     percentage: poll.percentageB,
-                    color: const Color(0xFFE53935),
+                    color: const Color(0xFFC62828),
                     isSelected: poll.userVote == 'b',
                   ),
                 ] else ...[
@@ -182,7 +182,7 @@ class _PollCardState extends State<PollCard>
                       Expanded(
                         child: VoteButton(
                           label: poll.optionA,
-                          color: const Color(0xFF4CAF50),
+                          color: const Color(0xFF2E7D32),
                           onTap: () => widget.onVote('a'),
                         ),
                       ),
@@ -190,7 +190,7 @@ class _PollCardState extends State<PollCard>
                       Expanded(
                         child: VoteButton(
                           label: poll.optionB,
-                          color: const Color(0xFFE53935),
+                          color: const Color(0xFFC62828),
                           onTap: () => widget.onVote('b'),
                         ),
                       ),
@@ -207,17 +207,17 @@ class _PollCardState extends State<PollCard>
                       '${poll.formattedVotes} votes',
                       style: TextStyle(
                         fontSize: 13,
-                        color: Colors.white.withValues(alpha: 0.4),
+                        color: Colors.grey.shade500,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
                     if (hasVoted)
-                      Text(
+                      const Text(
                         'Tap for details →',
                         style: TextStyle(
                           fontSize: 12,
-                          color: const Color(0xFF4CAF50).withValues(alpha: 0.7),
-                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF2E7D32),
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
                   ],

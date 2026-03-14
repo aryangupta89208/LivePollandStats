@@ -88,35 +88,35 @@ class _PollDetailScreenState extends State<PollDetailScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0A0E17),
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white),
+          icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.black87),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: const Text(
           'Poll Results',
           style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w700,
+            color: Colors.black87,
+            fontWeight: FontWeight.bold,
           ),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.share_rounded, color: Color(0xFFF5C518)),
+            icon: const Icon(Icons.share_rounded, color: Color(0xFFF9A825)),
             onPressed: _share,
           ),
         ],
       ),
       body: _isLoading
           ? const Center(
-              child: CircularProgressIndicator(color: Color(0xFF4CAF50)),
+              child: CircularProgressIndicator(color: Color(0xFF2E7D32)),
             )
           : _result == null
               ? const Center(
-                  child: Text('Failed to load', style: TextStyle(color: Colors.white54)),
+                  child: Text('Failed to load', style: TextStyle(color: Colors.black54)),
                 )
               : FadeTransition(
                   opacity: _slideAnimation,
@@ -135,17 +135,10 @@ class _PollDetailScreenState extends State<PollDetailScreen>
                             width: double.infinity,
                             padding: const EdgeInsets.all(24),
                             decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [
-                                  const Color(0xFF4CAF50).withValues(alpha: 0.15),
-                                  const Color(0xFF1A1D2E),
-                                ],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ),
-                              borderRadius: BorderRadius.circular(20),
+                              color: Colors.grey.shade50,
+                              borderRadius: BorderRadius.circular(16),
                               border: Border.all(
-                                color: const Color(0xFF4CAF50).withValues(alpha: 0.2),
+                                color: Colors.grey.shade200,
                               ),
                             ),
                             child: Column(
@@ -154,8 +147,8 @@ class _PollDetailScreenState extends State<PollDetailScreen>
                                   '${_result!.poll.categoryEmoji} ${_result!.poll.categoryLabel}',
                                   style: TextStyle(
                                     fontSize: 12,
-                                    fontWeight: FontWeight.w700,
-                                    color: const Color(0xFFF5C518).withValues(alpha: 0.9),
+                                    fontWeight: FontWeight.w800,
+                                    color: Colors.grey.shade600,
                                     letterSpacing: 2,
                                   ),
                                 ),
@@ -165,8 +158,8 @@ class _PollDetailScreenState extends State<PollDetailScreen>
                                   textAlign: TextAlign.center,
                                   style: const TextStyle(
                                     fontSize: 22,
-                                    fontWeight: FontWeight.w800,
-                                    color: Colors.white,
+                                    fontWeight: FontWeight.w900,
+                                    color: Colors.black87,
                                     height: 1.3,
                                   ),
                                 ),
@@ -174,8 +167,9 @@ class _PollDetailScreenState extends State<PollDetailScreen>
                                 Text(
                                   '${_result!.poll.formattedVotes} votes',
                                   style: TextStyle(
-                                    color: Colors.white.withValues(alpha: 0.5),
+                                    color: Colors.grey.shade500,
                                     fontSize: 14,
+                                    fontWeight: FontWeight.w500,
                                   ),
                                 ),
                               ],
@@ -202,7 +196,7 @@ class _PollDetailScreenState extends State<PollDetailScreen>
                           // Share CTA
                           SizedBox(
                             width: double.infinity,
-                            height: 52,
+                            height: 56,
                             child: ElevatedButton.icon(
                               onPressed: _share,
                               icon: const Icon(Icons.share_rounded),
@@ -214,8 +208,9 @@ class _PollDetailScreenState extends State<PollDetailScreen>
                                 ),
                               ),
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFFF5C518),
-                                foregroundColor: Colors.black,
+                                backgroundColor: const Color(0xFFF9A825),
+                                foregroundColor: Colors.white,
+                                elevation: 0,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(14),
                                 ),
@@ -234,10 +229,10 @@ class _PollDetailScreenState extends State<PollDetailScreen>
     return Text(
       title,
       style: TextStyle(
-        fontSize: 13,
-        fontWeight: FontWeight.w700,
-        color: Colors.white.withValues(alpha: 0.5),
-        letterSpacing: 2,
+        fontSize: 12,
+        fontWeight: FontWeight.w800,
+        color: Colors.grey.shade700,
+        letterSpacing: 1.5,
       ),
     );
   }
@@ -247,10 +242,10 @@ class _PollDetailScreenState extends State<PollDetailScreen>
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: const Color(0xFF1A1D2E),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: Colors.white.withValues(alpha: 0.06),
+          color: Colors.grey.shade200,
         ),
       ),
       child: Column(
@@ -258,7 +253,7 @@ class _PollDetailScreenState extends State<PollDetailScreen>
           PercentageBar(
             label: poll.optionA,
             percentage: poll.percentageA,
-            color: const Color(0xFF4CAF50),
+            color: const Color(0xFF2E7D32),
             isSelected: poll.userVote == 'a',
             animate: true,
           ),
@@ -266,7 +261,7 @@ class _PollDetailScreenState extends State<PollDetailScreen>
           PercentageBar(
             label: poll.optionB,
             percentage: poll.percentageB,
-            color: const Color(0xFFE53935),
+            color: const Color(0xFFC62828),
             isSelected: poll.userVote == 'b',
             animate: true,
           ),
@@ -276,15 +271,23 @@ class _PollDetailScreenState extends State<PollDetailScreen>
   }
 
   Widget _teamRow(TeamBreakdown team) {
+    final teamColor = _getTeamColor(team.team);
     return Container(
-      margin: const EdgeInsets.only(bottom: 10),
+      margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
-        color: const Color(0xFF1A1D2E),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Colors.white.withValues(alpha: 0.06),
+          color: Colors.grey.shade100,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.02),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         children: [
@@ -292,7 +295,7 @@ class _PollDetailScreenState extends State<PollDetailScreen>
             width: 44,
             height: 44,
             decoration: BoxDecoration(
-              color: _getTeamColor(team.team).withValues(alpha: 0.2),
+              color: teamColor.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Center(
@@ -301,7 +304,7 @@ class _PollDetailScreenState extends State<PollDetailScreen>
                 style: TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w900,
-                  color: _getTeamColor(team.team),
+                  color: teamColor,
                 ),
               ),
             ),
@@ -312,10 +315,10 @@ class _PollDetailScreenState extends State<PollDetailScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '${team.team} fans',
+                  team.team,
                   style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                    fontWeight: FontWeight.bold,
                     fontSize: 14,
                   ),
                 ),
@@ -324,10 +327,8 @@ class _PollDetailScreenState extends State<PollDetailScreen>
                   borderRadius: BorderRadius.circular(4),
                   child: LinearProgressIndicator(
                     value: team.percentageA / 100,
-                    backgroundColor: Colors.white.withValues(alpha: 0.08),
-                    valueColor: AlwaysStoppedAnimation(
-                      _getTeamColor(team.team),
-                    ),
+                    backgroundColor: Colors.grey.shade100,
+                    valueColor: AlwaysStoppedAnimation(teamColor),
                     minHeight: 6,
                   ),
                 ),
@@ -341,16 +342,17 @@ class _PollDetailScreenState extends State<PollDetailScreen>
               Text(
                 '${team.percentageA.toStringAsFixed(0)}%',
                 style: TextStyle(
-                  fontSize: 20,
+                  fontSize: 18,
                   fontWeight: FontWeight.w900,
-                  color: _getTeamColor(team.team),
+                  color: teamColor,
                 ),
               ),
               Text(
                 _result!.poll.optionA,
                 style: TextStyle(
                   fontSize: 10,
-                  color: Colors.white.withValues(alpha: 0.4),
+                  color: Colors.grey.shade500,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ],
