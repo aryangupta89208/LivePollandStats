@@ -18,6 +18,7 @@ Flutter App → FastAPI (Railway) → PostgreSQL (Supabase) + Redis (Railway)
    - Go to **Settings -> Database -> Connection Pooling**.
    - Copy the connection string for **Transaction** mode.
    - It should use port **6543**.
+   - **IMPORTANT**: If your password contains special characters like `@`, you MUST URL-encode them. (e.g., `@` becomes `%40`). So `MyP@ssword` becomes `MyP%40ssword`.
 5. Format: `postgresql+asyncpg://postgres.[REF]:[PASSWORD]@aws-0-[REGION].pooler.supabase.com:6543/postgres`
 6. **Why?**: Direct connection (port 5432) often uses IPv6, which Railway does not yet support for outbound traffic, leading to "Network is unreachable" errors.
 

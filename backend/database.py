@@ -17,17 +17,22 @@ elif database_url.startswith("postgresql://") and "+asyncpg" not in database_url
 # Mask sensitive info for logging
 db_host = database_url.split("@")[-1].split("/")[0] if "@" in database_url else "localhost"
 
-# Use SSL for Supabase (production)
+# Basic SQLAlchemy pool settings
 engine_args = {
     "echo": False,
-    "pool_size": 20,
-    "max_overflow": 10,
-    "pool_pre_ping": True,
+    "pool_size": 10,       # Reduced to prevent overwhelming the pooler
+    "max_overflow": 5,     # Reduced max burst
+    "pool_pre_ping": True, # Keep connection health checks
+    "connect_args": {
+        # Supavisor Transaction mode doesn't support session-level prepared statements
+        "prepared_statement_cache_size": 0,
+        "statement_cache_size": 0,
+    }
 }
 
 if "localhost" not in database_url:
-    # Use 'require' mode for asyncpg to work with Supabase poolers without strictly verifying the CA chain
-    engine_args["connect_args"] = {"ssl": "require"}
+    # Use 'require' mode for asyncpg to work with Supabase poolers
+    engine_args["connect_args"]["ssl"] = "require"
 
 print(f"🛠️  Engine initialized for host: {db_host}")
 engine = create_async_engine(database_url, **engine_args)
