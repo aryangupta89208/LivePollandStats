@@ -90,9 +90,13 @@ async def health():
 @app.get("/seed")
 async def manual_seed():
     try:
-        from database import init_db
+        from database import init_db, async_session
+        from sqlalchemy import select, func
+        from models import Poll
         await init_db()
-        return {"status": "success", "message": "Seeding triggered"}
+        async with async_session() as db:
+            count = (await db.execute(select(func.count()).select_from(Poll))).scalar()
+        return {"status": "success", "message": "Seeding triggered", "count": count}
     except Exception as e:
         return {"status": "error", "message": str(e)}
 
