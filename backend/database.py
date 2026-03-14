@@ -64,8 +64,20 @@ async def init_db():
             
             # Auto-seed if empty
             try:
-                from seed import seed
-                await seed()
+                from sqlalchemy import select, func
+                from models import Poll
+                from seed_data import SEED_POLLS
+                
+                async with async_session() as db:
+                    count = (await db.execute(select(func.count()).select_from(Poll))).scalar()
+                    if count == 0:
+                        print("🌱 Database is empty. Seeding IPL polls...")
+                        for poll_data in SEED_POLLS:
+                            db.add(Poll(**poll_data))
+                        await db.commit()
+                        print(f"✅ Seeded {len(SEED_POLLS)} IPL polls!")
+                    else:
+                        print(f"ℹ️  Database already has {count} polls. Seeding skipped.")
             except Exception as seed_err:
                 print(f"⚠️  Auto-seed skipped/failed: {seed_err}")
 

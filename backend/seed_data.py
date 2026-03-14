@@ -1,8 +1,4 @@
-"""Seed the database with 30 IPL poll questions."""
-import asyncio
-from database import async_session, init_db
-from models import Poll
-
+"""Seed data for IPL poll questions."""
 
 SEED_POLLS = [
     # GOAT debates
@@ -47,25 +43,3 @@ SEED_POLLS = [
     {"question": "Should IPL expand to 12 teams?", "option_a": "More cricket = better", "option_b": "10 is perfect", "category": "fun"},
     {"question": "Is the IPL auction more exciting than the actual matches?", "option_a": "Auction > Matches", "option_b": "Nothing beats match day", "category": "fun"},
 ]
-
-
-async def seed():
-    await init_db()
-    async with async_session() as db:
-        # Check if polls already exist
-        from sqlalchemy import select, func
-        count = (await db.execute(select(func.count()).select_from(Poll))).scalar()
-        if count > 0:
-            print(f"⚠️  Database already has {count} polls. Skipping seed.")
-            return
-
-        for poll_data in SEED_POLLS:
-            poll = Poll(**poll_data)
-            db.add(poll)
-
-        await db.commit()
-        print(f"✅ Seeded {len(SEED_POLLS)} IPL polls!")
-
-
-if __name__ == "__main__":
-    asyncio.run(seed())
