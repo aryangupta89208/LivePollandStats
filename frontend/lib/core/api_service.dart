@@ -5,7 +5,7 @@ import '../models/poll_model.dart';
 import '../models/user_model.dart';
 
 class ApiService {
-  static const String baseUrl = 'https://api.stackrunner3d.com';
+  static const String baseUrl = 'https://livepollandstats-production.up.railway.app';
 
   static final Map<String, String> _headers = {
     'Content-Type': 'application/json',

@@ -28,9 +28,9 @@ class SocketService {
     _controller?.close();
     _controller = StreamController<Map<String, dynamic>>.broadcast();
 
-    final wsUrl = Uri.parse('wss://api.stackrunner3d.com/ws');
+    final wsUrl = Uri.parse('wss://livepollandstats-production.up.railway.app/ws');
     try {
-      _channel = WebSocketChannel.connect(Uri.parse('wss://api.stackrunner3d.com/ws'));
+      _channel = WebSocketChannel.connect(Uri.parse('wss://livepollandstats-production.up.railway.app/ws'));
       _isConnected = true;
 
       _channel!.stream.listen(
