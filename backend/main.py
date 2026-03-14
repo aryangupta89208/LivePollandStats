@@ -84,7 +84,7 @@ async def websocket_endpoint(websocket: WebSocket):
 # ── Health check ──
 @app.get("/health")
 async def health():
-    return {"status": "ok", "app": "IPL Fan Battle"}
+    return {"status": "ok", "app": "IPL Fan Battle", "version": "1.0.2"}
 
 
 @app.get("/seed")
