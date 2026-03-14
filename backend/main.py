@@ -84,21 +84,7 @@ async def websocket_endpoint(websocket: WebSocket):
 # ── Health check ──
 @app.get("/health")
 async def health():
-    return {"status": "ok", "app": "IPL Fan Battle", "version": "1.0.2"}
-
-
-@app.get("/seed")
-async def manual_seed():
-    try:
-        from database import init_db, async_session
-        from sqlalchemy import select, func
-        from models import Poll
-        await init_db()
-        async with async_session() as db:
-            count = (await db.execute(select(func.count()).select_from(Poll))).scalar()
-        return {"status": "success", "message": "Seeding triggered", "count": count}
-    except Exception as e:
-        return {"status": "error", "message": str(e)}
+    return {"status": "ok", "app": "IPL Fan Battle"}
 
 
 if __name__ == "__main__":
