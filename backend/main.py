@@ -87,6 +87,16 @@ async def health():
     return {"status": "ok", "app": "IPL Fan Battle"}
 
 
+@app.get("/seed")
+async def manual_seed():
+    try:
+        from database import init_db
+        await init_db()
+        return {"status": "success", "message": "Seeding triggered"}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
+
 if __name__ == "__main__":
     import uvicorn
     from config import get_settings
