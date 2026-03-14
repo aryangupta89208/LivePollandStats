@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -5,7 +6,16 @@ import 'core/api_service.dart';
 import 'screens/onboarding_screen.dart';
 import 'screens/home_screen.dart';
 
+class DevHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback = (X509Certificate cert, String host, int port) => true;
+  }
+}
+
 void main() {
+  HttpOverrides.global = DevHttpOverrides();
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
@@ -87,15 +97,15 @@ class _AppEntryState extends State<AppEntry> {
   Widget build(BuildContext context) {
     if (_isLoading) {
       return const Scaffold(
-        backgroundColor: Color(0xFF0A0E17),
+        backgroundColor: Colors.white,
         body: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Text('🏏', style: TextStyle(fontSize: 56)),
-              SizedBox(height: 16),
+              SizedBox(height: 24),
               CircularProgressIndicator(
-                color: Color(0xFF4CAF50),
+                color: Color(0xFF2E7D32),
                 strokeWidth: 3,
               ),
             ],

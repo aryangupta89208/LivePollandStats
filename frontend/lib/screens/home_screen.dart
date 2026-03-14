@@ -250,9 +250,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: Colors.white,
-          border: Border(
-            top: BorderSide(color: Colors.grey.shade200),
-          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.1),
+              blurRadius: 20,
+              offset: const Offset(0, -4),
+            ),
+          ],
         ),
         child: BottomNavigationBar(
           currentIndex: _currentNavIndex,
@@ -268,20 +272,21 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               );
             }
           },
-          backgroundColor: Colors.transparent,
+          backgroundColor: Colors.white,
           elevation: 0,
-          selectedItemColor: const Color(0xFF2E7D32),
-          unselectedItemColor: Colors.grey.shade400,
+          selectedItemColor: const Color(0xFF1B5E20),
+          unselectedItemColor: Colors.grey.shade700,
           selectedFontSize: 12,
           unselectedFontSize: 12,
+          showUnselectedLabels: true,
           type: BottomNavigationBarType.fixed,
           items: const [
             BottomNavigationBarItem(
-              icon: Icon(Icons.local_fire_department_rounded),
+              icon: Icon(Icons.bolt_rounded),
               label: 'Feed',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.emoji_events_rounded),
+              icon: Icon(Icons.leaderboard_rounded),
               label: 'Leaderboard',
             ),
             BottomNavigationBarItem(
