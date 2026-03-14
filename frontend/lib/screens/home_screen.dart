@@ -5,6 +5,7 @@ import '../core/api_service.dart';
 import '../core/socket_service.dart';
 import '../models/poll_model.dart';
 import '../widgets/poll_card.dart';
+import '../widgets/skeleton_poll_card.dart';
 import 'poll_detail_screen.dart';
 import 'profile_screen.dart';
 import 'leaderboard_screen.dart';
@@ -192,10 +193,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             // Poll Feed
             Expanded(
               child: _isLoading
-                  ? const Center(
-                      child: CircularProgressIndicator(
-                        color: Color(0xFF2E7D32),
-                      ),
+                  ? ListView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      itemCount: 4,
+                      itemBuilder: (_, __) => const SkeletonPollCard(),
                     )
                   : _polls.isEmpty
                       ? Center(
