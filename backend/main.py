@@ -31,6 +31,8 @@ async def lifespan(app: FastAPI):
         print("✅ Redis Pub/Sub listener started")
     except Exception as e:
         print(f"❌ Redis initialization failed: {e}")
+    except Exception as e:
+        print(f"❌ Redis initialization failed: {e}")
 
     print("🏏 IPL Fan Battle API is live!")
     yield

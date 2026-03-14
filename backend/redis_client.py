@@ -90,8 +90,6 @@ async def invalidate_poll_cache(poll_id: str) -> None:
     pipe.delete(f"poll:{poll_id}:b")
     pipe.delete(f"poll:{poll_id}:total")
     await pipe.execute()
-
-
 # Pub/Sub Channel Name
 VOTE_CHANNEL = "vote_updates"
 
