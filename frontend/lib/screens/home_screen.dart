@@ -275,11 +275,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           backgroundColor: Colors.white,
           elevation: 0,
           selectedItemColor: const Color(0xFF1B5E20),
-          unselectedItemColor: Colors.grey.shade700,
+          unselectedItemColor: Colors.black87,
           selectedFontSize: 12,
           unselectedFontSize: 12,
           showUnselectedLabels: true,
           type: BottomNavigationBarType.fixed,
+          iconSize: 26,
           items: const [
             BottomNavigationBarItem(
               icon: Icon(Icons.bolt_rounded),

@@ -84,12 +84,34 @@ class _AppEntryState extends State<AppEntry> {
   }
 
   Future<void> _checkOnboarding() async {
-    final onboarded = await ApiService.isOnboarded();
-    if (mounted) {
-      setState(() {
-        _isOnboarded = onboarded;
-        _isLoading = false;
-      });
+    try {
+      final onboarded = await ApiService.isOnboarded();
+      if (!onboarded) {
+        if (mounted) setState(() => _isLoading = false);
+        return;
+      }
+
+      final deviceId = await ApiService.getDeviceId();
+      if (deviceId != null) {
+        // Verify user exists on backend
+        await ApiService.getUser(deviceId);
+        if (mounted) {
+          setState(() {
+            _isOnboarded = true;
+            _isLoading = false;
+          });
+        }
+      } else {
+        if (mounted) setState(() => _isLoading = false);
+      }
+    } catch (e) {
+      // If user not found (404) or any error, force re-onboarding
+      if (mounted) {
+        setState(() {
+          _isOnboarded = false;
+          _isLoading = false;
+        });
+      }
     }
   }
 

@@ -71,17 +71,22 @@ async def init_db():
                 from seed_data import SEED_POLLS
                 
                 async with async_session() as db:
-                    count = (await db.execute(select(func.count()).select_from(Poll))).scalar()
+                    print("🔍 Checking if database needs seeding...")
+                    count_result = await db.execute(select(func.count()).select_from(Poll))
+                    count = count_result.scalar() or 0
+                    
                     if count == 0:
-                        print("🌱 Database is empty. Seeding IPL polls...")
+                        print(f"🌱 Database is empty. Seeding {len(SEED_POLLS)} IPL polls...")
                         for poll_data in SEED_POLLS:
                             db.add(Poll(**poll_data))
                         await db.commit()
-                        print(f"✅ Seeded {len(SEED_POLLS)} IPL polls!")
+                        print(f"✅ Seeding complete! Total polls: {len(SEED_POLLS)}")
                     else:
                         print(f"ℹ️  Database already has {count} polls. Seeding skipped.")
             except Exception as seed_err:
-                print(f"⚠️  Auto-seed skipped/failed: {seed_err}")
+                print(f"⚠️  Auto-seed error: {seed_err}")
+                import traceback
+                traceback.print_exc()
 
             print("✅ Database connected and schema verified.")
             return
