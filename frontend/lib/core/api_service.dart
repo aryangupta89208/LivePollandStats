@@ -38,12 +38,31 @@ class ApiService {
   static Future<List<PollModel>> getPolls({String? userId}) async {
     String url = '$baseUrl/polls';
     if (userId != null) url += '?user_id=$userId';
-    final res = await http.get(Uri.parse(url));
-    if (res.statusCode == 200) {
-      final List data = jsonDecode(res.body);
-      return data.map((e) => PollModel.fromJson(e)).toList();
+    
+    try {
+      final res = await http.get(Uri.parse(url));
+      if (res.statusCode == 200) {
+        final List data = jsonDecode(res.body);
+        // 💾 Cache the result
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('cached_polls', res.body);
+        return data.map((e) => PollModel.fromJson(e)).toList();
+      }
+    } catch (e) {
+      // If network fails, try cache
+      return getCachedPolls();
     }
     throw Exception('Failed to load polls');
+  }
+
+  static Future<List<PollModel>> getCachedPolls() async {
+    final prefs = await SharedPreferences.getInstance();
+    final cached = prefs.getString('cached_polls');
+    if (cached != null) {
+      final List data = jsonDecode(cached);
+      return data.map((e) => PollModel.fromJson(e)).toList();
+    }
+    return [];
   }
 
   static Future<PollResult> getPollResults(String pollId, {String? userId}) async {

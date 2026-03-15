@@ -40,6 +40,16 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Future<void> _init() async {
     _userId = await ApiService.getUserId();
     _userTeam = await ApiService.getTeam();
+    
+    // ⚡ Instant Cache: Show last seen polls immediately
+    final cached = await ApiService.getCachedPolls();
+    if (cached.isNotEmpty && mounted) {
+      setState(() {
+        _polls = cached;
+        _isLoading = false;
+      });
+    }
+
     await _loadPolls();
     _connectWs();
   }
@@ -79,31 +89,61 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     if (poll.userVote != null || _userId == null) return;
     HapticFeedback.mediumImpact();
 
+    // ⚡ Optimistic Update: Update UI instantly
+    final oldVotesA = poll.votesA;
+    final oldVotesB = poll.votesB;
+    final oldTotal = poll.totalVotes;
+    final oldPercA = poll.percentageA;
+    final oldPercB = poll.percentageB;
+
+    setState(() {
+      poll.applyOptimisticVote(vote);
+    });
+
     try {
       final updated = await ApiService.vote(_userId!, poll.id, vote);
-      if (mounted) {
+      if (mounted && updated != null) {
+        // Sync with server data just in case
         setState(() {
-          poll.userVote = vote;
-          if (updated != null) {
-            poll.votesA = updated.votesA;
-            poll.votesB = updated.votesB;
-            poll.totalVotes = updated.totalVotes;
-            poll.percentageA = updated.percentageA;
-            poll.percentageB = updated.percentageB;
+          poll.votesA = updated.votesA;
+          poll.votesB = updated.votesB;
+          poll.totalVotes = updated.totalVotes;
+          poll.percentageA = updated.percentageA;
+          poll.percentageB = updated.percentageB;
+        });
+        
+        // Navigate to detail after a short delay for smoothness
+        Future.delayed(const Duration(milliseconds: 300), () {
+          if (mounted) {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => PollDetailScreen(pollId: poll.id, userId: _userId!),
+              ),
+            );
           }
         });
-        // Navigate to detail
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) => PollDetailScreen(pollId: poll.id, userId: _userId!),
-          ),
-        );
       }
     } catch (e) {
-      if (mounted && e.toString().contains('Already voted')) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('You already voted on this poll!')),
-        );
+      // ❌ Revert on failure
+      if (mounted) {
+        setState(() {
+          poll.userVote = null;
+          poll.votesA = oldVotesA;
+          poll.votesB = oldVotesB;
+          poll.totalVotes = oldTotal;
+          poll.percentageA = oldPercA;
+          poll.percentageB = oldPercB;
+        });
+
+        if (e.toString().contains('Already voted')) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('You already voted on this poll!')),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Connection failed. Please try again.')),
+          );
+        }
       }
     }
   }

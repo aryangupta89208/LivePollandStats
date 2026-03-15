@@ -29,6 +29,24 @@ class PollModel {
     this.userVote,
   });
 
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'question': question,
+      'option_a': optionA,
+      'option_b': optionB,
+      'category': category,
+      'active': active,
+      'created_at': createdAt.toIso8601String(),
+      'votes_a': votesA,
+      'votes_b': votesB,
+      'total_votes': totalVotes,
+      'percentage_a': percentageA,
+      'percentage_b': percentageB,
+      'user_vote': userVote,
+    };
+  }
+
   factory PollModel.fromJson(Map<String, dynamic> json) {
     return PollModel(
       id: json['id'],
@@ -96,6 +114,18 @@ class PollModel {
     totalVotes = data['total_votes'] ?? totalVotes;
     percentageA = (data['percentage_a'] ?? percentageA).toDouble();
     percentageB = (data['percentage_b'] ?? percentageB).toDouble();
+  }
+
+  void applyOptimisticVote(String vote) {
+    userVote = vote;
+    if (vote == 'a') {
+      votesA++;
+    } else {
+      votesB++;
+    }
+    totalVotes++;
+    percentageA = (totalVotes == 0) ? 0.0 : (votesA / totalVotes) * 100;
+    percentageB = (totalVotes == 0) ? 0.0 : (votesB / totalVotes) * 100;
   }
 }
 
