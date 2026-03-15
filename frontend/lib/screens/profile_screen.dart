@@ -117,16 +117,25 @@ class _ProfileScreenState extends State<ProfileScreen>
                         ),
                         const SizedBox(height: 16),
                         Text(
-                          _user!.favoriteTeam,
+                          _user!.displayName,
                           style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                            fontSize: 24,
+                            fontWeight: FontWeight.w900,
                             color: Colors.black87,
                           ),
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          'Fan since joining 🏏',
+                          _user!.favoriteTeam,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: _getTeamColor(_user!.favoriteTeam),
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Fan since joining',
                           style: TextStyle(
                             color: Colors.grey.shade500,
                             fontSize: 14,
@@ -141,7 +150,6 @@ class _ProfileScreenState extends State<ProfileScreen>
                               child: _statCard(
                                 'FAN IQ',
                                 _user!.formattedFanIq,
-                                '⚡',
                                 const Color(0xFFF9A825),
                               ),
                             ),
@@ -150,7 +158,6 @@ class _ProfileScreenState extends State<ProfileScreen>
                               child: _statCard(
                                 'VOTES',
                                 _user!.totalVotes.toString(),
-                                '🗳️',
                                 const Color(0xFF2E7D32),
                               ),
                             ),
@@ -163,7 +170,6 @@ class _ProfileScreenState extends State<ProfileScreen>
                               child: _statCard(
                                 'ACCURACY',
                                 '${_user!.accuracy.toStringAsFixed(1)}%',
-                                '🎯',
                                 const Color(0xFF1976D2),
                               ),
                             ),
@@ -172,7 +178,6 @@ class _ProfileScreenState extends State<ProfileScreen>
                               child: _statCard(
                                 'CORRECT',
                                 _user!.correctPredictions.toString(),
-                                '✅',
                                 const Color(0xFF43A047),
                               ),
                             ),
@@ -246,7 +251,7 @@ class _ProfileScreenState extends State<ProfileScreen>
     );
   }
 
-  Widget _statCard(String label, String value, String emoji, Color color) {
+  Widget _statCard(String label, String value, Color color) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -264,8 +269,6 @@ class _ProfileScreenState extends State<ProfileScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(emoji, style: const TextStyle(fontSize: 24)),
-          const SizedBox(height: 12),
           Text(
             value,
             style: TextStyle(
@@ -290,10 +293,14 @@ class _ProfileScreenState extends State<ProfileScreen>
   }
 
   String _getFanLevel(int iq) {
+    if (iq >= 10000) return '🧠 Ultra Instinct';
+    if (iq >= 7500) return '⚡ Cricket God';
     if (iq >= 5000) return '🏆 Legend';
-    if (iq >= 3000) return '⭐ Expert';
-    if (iq >= 1000) return '🔥 Pro Fan';
-    if (iq >= 500) return '👍 Regular';
+    if (iq >= 4000) return '🏅 Hall of Fame';
+    if (iq >= 3000) return '⭐ Grandmaster';
+    if (iq >= 2000) return '🔥 Master Mind';
+    if (iq >= 1000) return '🏏 Pro Analyst';
+    if (iq >= 500) return '📈 Rising Star';
     return '🌱 Rookie';
   }
 

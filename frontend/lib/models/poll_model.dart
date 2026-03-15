@@ -66,20 +66,7 @@ class PollModel {
   }
 
   String get categoryEmoji {
-    switch (category) {
-      case 'goat':
-        return '🐐';
-      case 'team_battle':
-        return '⚔️';
-      case 'player_battle':
-        return '👤';
-      case 'prediction':
-        return '🔮';
-      case 'fun':
-        return '🎉';
-      default:
-        return '🔥';
-    }
+    return '';
   }
 
   String get categoryLabel {

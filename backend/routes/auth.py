@@ -17,11 +17,18 @@ async def signup(req: SignupRequest, db: AsyncSession = Depends(get_db)):
     if user:
         if user.favorite_team != req.favorite_team:
             user.favorite_team = req.favorite_team
-            await db.commit()
-            await db.refresh(user)
+        if req.display_name and user.display_name != req.display_name:
+            user.display_name = req.display_name
+        await db.commit()
+        await db.refresh(user)
         return _build_user_response(user)
 
-    user = User(device_id=req.device_id, favorite_team=req.favorite_team)
+    display_name = req.display_name or f"Fan_{req.device_id[:6]}"
+    user = User(
+        device_id=req.device_id, 
+        favorite_team=req.favorite_team,
+        display_name=display_name
+    )
     db.add(user)
     await db.commit()
     await db.refresh(user)
@@ -45,6 +52,7 @@ def _build_user_response(user: User) -> UserResponse:
     return UserResponse(
         id=user.id,
         device_id=user.device_id,
+        display_name=user.display_name,
         favorite_team=user.favorite_team,
         fan_iq=user.fan_iq,
         total_votes=user.total_votes,

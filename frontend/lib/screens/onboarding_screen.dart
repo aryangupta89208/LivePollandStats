@@ -17,6 +17,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   bool _isLoading = false;
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
+  final TextEditingController _nameController = TextEditingController();
 
   static const teams = [
     {'name': 'Chennai Super Kings', 'image': 'assets/logos/csk.png', 'color': 0xFFFDB913},
@@ -57,8 +58,21 @@ class _OnboardingScreenState extends State<OnboardingScreen>
     HapticFeedback.mediumImpact();
 
     try {
-      final deviceId = const Uuid().v4();
-      final user = await ApiService.signup(deviceId, _selectedTeam!);
+      String deviceId = await ApiService.getHardwareId();
+      if (deviceId.isEmpty) {
+        deviceId = const Uuid().v4();
+      }
+      
+      final nickname = _nameController.text.trim().isEmpty 
+          ? 'Fan_${deviceId.substring(0, 5)}' 
+          : _nameController.text.trim();
+          
+      final user = await ApiService.signup(
+        deviceId, 
+        _selectedTeam!, 
+        displayName: nickname
+      );
+      
       await ApiService.saveDeviceId(deviceId);
       await ApiService.saveUserId(user.id);
       await ApiService.saveTeam(_selectedTeam!);
@@ -91,11 +105,8 @@ class _OnboardingScreenState extends State<OnboardingScreen>
           children: [
             const SizedBox(height: 40),
             // Header
-            const Text(
-              '🏏',
-              style: TextStyle(fontSize: 48),
-            ),
-            const SizedBox(height: 12),
+            const Icon(Icons.bolt_rounded, size: 64, color: Color(0xFF2E7D32)),
+            const SizedBox(height: 16),
             const Text(
               'IPL Fan Battle',
               style: TextStyle(
@@ -105,7 +116,6 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                 letterSpacing: -0.5,
               ),
             ),
-            const SizedBox(height: 4),
             Text(
               'Choose your favorite team',
               style: TextStyle(
@@ -114,7 +124,38 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                 fontWeight: FontWeight.w500,
               ),
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: 24),
+            
+            // Nickname Input
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: TextField(
+                controller: _nameController,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+                decoration: InputDecoration(
+                  hintText: 'Enter your Nickname (e.g. Dhoni_Fan)',
+                  hintStyle: TextStyle(color: Colors.grey.shade400, fontWeight: FontWeight.normal),
+                  prefixIcon: const Icon(Icons.person_outline_rounded, color: Color(0xFF2E7D32)),
+                  filled: true,
+                  fillColor: Colors.grey.shade50,
+                  contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: BorderSide(color: Colors.grey.shade200),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: BorderSide(color: Colors.grey.shade100),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: const BorderSide(color: Color(0xFF2E7D32), width: 2),
+                  ),
+                ),
+              ),
+            ),
+            
+            const SizedBox(height: 24),
 
             // Team Grid
             Expanded(

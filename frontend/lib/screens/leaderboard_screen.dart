@@ -128,17 +128,15 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
           // Rank
           SizedBox(
             width: 36,
-            child: isTop3
-                ? Text(medals[index], style: const TextStyle(fontSize: 22))
-                : Text(
-                    '${entry.rank}',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.grey.shade400,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
+            child: Text(
+              '${entry.rank}',
+              style: TextStyle(
+                fontSize: isTop3 ? 20 : 16,
+                fontWeight: FontWeight.w900,
+                color: isTop3 ? _getRankColor(index) : Colors.grey.shade400,
+              ),
+              textAlign: TextAlign.center,
+            ),
           ),
           const SizedBox(width: 12),
           // Team Badge
@@ -167,11 +165,11 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '${entry.favoriteTeam} Fan',
+                  entry.displayName,
                   style: const TextStyle(
                     color: Colors.black87,
                     fontWeight: FontWeight.bold,
-                    fontSize: 14,
+                    fontSize: 16,
                   ),
                 ),
                 const SizedBox(height: 2),

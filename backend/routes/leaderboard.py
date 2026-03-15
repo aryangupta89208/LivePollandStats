@@ -38,6 +38,7 @@ async def get_leaderboard(
         entries.append(LeaderboardEntry(
             rank=i,
             id=user.id,
+            display_name=user.display_name,
             favorite_team=user.favorite_team,
             fan_iq=user.fan_iq,
             total_votes=user.total_votes,

@@ -8,11 +8,13 @@ from datetime import datetime
 class SignupRequest(BaseModel):
     device_id: str = Field(..., min_length=1, max_length=255)
     favorite_team: str = Field(..., min_length=1, max_length=100)
+    display_name: Optional[str] = Field(None, max_length=100)
 
 
 class UserResponse(BaseModel):
     id: UUID
     device_id: str
+    display_name: str
     favorite_team: str
     fan_iq: int
     total_votes: int
@@ -73,6 +75,7 @@ class VoteResponse(BaseModel):
 class LeaderboardEntry(BaseModel):
     rank: int
     id: UUID
+    display_name: str
     favorite_team: str
     fan_iq: int
     total_votes: int

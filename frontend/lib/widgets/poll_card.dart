@@ -106,7 +106,7 @@ class _PollCardState extends State<PollCard>
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
-                        '${poll.categoryEmoji} ${poll.categoryLabel}',
+                        poll.categoryLabel,
                         style: TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.w700,

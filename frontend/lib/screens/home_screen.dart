@@ -156,7 +156,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
               child: Row(
                 children: [
-                  const Text('🏏', style: TextStyle(fontSize: 28)),
+                  const Icon(Icons.bolt_rounded, size: 32, color: Color(0xFF1B5E20)),
                   const SizedBox(width: 10),
                   Expanded(
                     child: Column(
@@ -232,7 +232,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Text('🏏', style: TextStyle(fontSize: 48)),
+                              const Icon(Icons.poll_rounded, size: 64, color: Colors.grey),
                               const SizedBox(height: 16),
                               Text(
                                 'No polls yet!\nCheck back soon.',

@@ -1,4 +1,5 @@
-import 'dart:convert';
+import 'dart:io';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/poll_model.dart';
@@ -6,6 +7,22 @@ import '../models/user_model.dart';
 
 class ApiService {
   static const String baseUrl = 'https://livepollandstats-production.up.railway.app';
+  static final DeviceInfoPlugin _deviceInfo = DeviceInfoPlugin();
+
+  static Future<String> getHardwareId() async {
+    try {
+      if (Platform.isAndroid) {
+        final androidInfo = await _deviceInfo.androidInfo;
+        return androidInfo.id; // Unique ID that survives app data clear
+      } else if (Platform.isIOS) {
+        final iosInfo = await _deviceInfo.iosInfo;
+        return iosInfo.identifierForVendor ?? 'ios_unknown';
+      }
+    } catch (e) {
+      print('Failed to get hardware ID: $e');
+    }
+    return ''; // Fallback
+  }
 
   static final Map<String, String> _headers = {
     'Content-Type': 'application/json',
@@ -13,11 +30,15 @@ class ApiService {
 
   // ── Auth ──
 
-  static Future<UserModel> signup(String deviceId, String team) async {
+  static Future<UserModel> signup(String deviceId, String team, {String? displayName}) async {
     final res = await http.post(
       Uri.parse('$baseUrl/signup'),
       headers: _headers,
-      body: jsonEncode({'device_id': deviceId, 'favorite_team': team}),
+      body: jsonEncode({
+        'device_id': deviceId, 
+        'favorite_team': team,
+        'display_name': displayName,
+      }),
     );
     if (res.statusCode == 200) {
       return UserModel.fromJson(jsonDecode(res.body));

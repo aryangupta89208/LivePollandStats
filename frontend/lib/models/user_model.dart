@@ -1,6 +1,7 @@
 class UserModel {
   final String id;
   final String deviceId;
+  final String displayName;
   final String favoriteTeam;
   final int fanIq;
   final int totalVotes;
@@ -10,6 +11,7 @@ class UserModel {
   UserModel({
     required this.id,
     required this.deviceId,
+    required this.displayName,
     required this.favoriteTeam,
     this.fanIq = 0,
     this.totalVotes = 0,
@@ -21,6 +23,7 @@ class UserModel {
     return UserModel(
       id: json['id'],
       deviceId: json['device_id'],
+      displayName: json['display_name'] ?? 'Anonymous',
       favoriteTeam: json['favorite_team'],
       fanIq: json['fan_iq'] ?? 0,
       totalVotes: json['total_votes'] ?? 0,
@@ -56,6 +59,7 @@ class UserModel {
 class LeaderboardEntry {
   final int rank;
   final String id;
+  final String displayName;
   final String favoriteTeam;
   final int fanIq;
   final int totalVotes;
@@ -64,6 +68,7 @@ class LeaderboardEntry {
   LeaderboardEntry({
     required this.rank,
     required this.id,
+    required this.displayName,
     required this.favoriteTeam,
     this.fanIq = 0,
     this.totalVotes = 0,
@@ -74,6 +79,7 @@ class LeaderboardEntry {
     return LeaderboardEntry(
       rank: json['rank'],
       id: json['id'],
+      displayName: json['display_name'] ?? 'Anonymous',
       favoriteTeam: json['favorite_team'],
       fanIq: json['fan_iq'] ?? 0,
       totalVotes: json['total_votes'] ?? 0,

@@ -13,6 +13,7 @@ class User(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     device_id = Column(String(255), unique=True, nullable=False, index=True)
+    display_name = Column(String(100), nullable=False, default="Anonymous")
     favorite_team = Column(String(100), nullable=False)
     fan_iq = Column(Integer, default=0)
     total_votes = Column(Integer, default=0)
