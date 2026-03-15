@@ -111,16 +111,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           poll.percentageA = updated.percentageA;
           poll.percentageB = updated.percentageB;
         });
-        
-        // Navigate to detail after a short delay for smoothness
-        Future.delayed(const Duration(milliseconds: 300), () {
-          if (mounted) {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (_) => PollDetailScreen(pollId: poll.id, userId: _userId!),
-              ),
-            );
-          }
         });
       }
     } catch (e) {

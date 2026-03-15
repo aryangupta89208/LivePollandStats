@@ -84,51 +84,65 @@ class _AppEntryState extends State<AppEntry> {
   }
 
   Future<void> _checkOnboarding() async {
+    final startTime = DateTime.now();
+    
     try {
       final onboarded = await ApiService.isOnboarded();
       if (!onboarded) {
-        if (mounted) setState(() => _isLoading = false);
+        _awaitMinSplash(startTime);
         return;
       }
 
       final deviceId = await ApiService.getDeviceId();
       if (deviceId != null) {
-        // Verify user exists on backend
         await ApiService.getUser(deviceId);
-        if (mounted) {
-          setState(() {
-            _isOnboarded = true;
-            _isLoading = false;
-          });
-        }
+        _awaitMinSplash(startTime, onboarded: true);
       } else {
-        if (mounted) setState(() => _isLoading = false);
+        _awaitMinSplash(startTime);
       }
     } catch (e) {
-      // If user not found (404) or any error, force re-onboarding
-      if (mounted) {
-        setState(() {
-          _isOnboarded = false;
-          _isLoading = false;
-        });
-      }
+      _awaitMinSplash(startTime);
+    }
+  }
+
+  Future<void> _awaitMinSplash(DateTime start, {bool onboarded = false}) async {
+    final elapsed = DateTime.now().difference(start).inMilliseconds;
+    const minDelay = 1800;
+    if (elapsed < minDelay) {
+      await Future.delayed(Duration(milliseconds: minDelay - elapsed));
+    }
+    
+    if (mounted) {
+      setState(() {
+        _isOnboarded = onboarded;
+        _isLoading = false;
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return const Scaffold(
+      return Scaffold(
         backgroundColor: Colors.white,
         body: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('🏏', style: TextStyle(fontSize: 56)),
-              SizedBox(height: 24),
-              CircularProgressIndicator(
-                color: Color(0xFF2E7D32),
-                strokeWidth: 3,
+              Image.asset(
+                'assets/brand/app_icon.png',
+                width: 140,
+                height: 140,
+              ),
+              const SizedBox(height: 24),
+              const Text(
+                'IPL FAN BATTLE',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w900,
+                  color: Color(0xFF1B5E20),
+                  letterSpacing: 4,
+                ),
               ),
             ],
           ),

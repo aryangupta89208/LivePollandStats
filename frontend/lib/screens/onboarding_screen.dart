@@ -19,16 +19,16 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   late Animation<double> _fadeAnimation;
 
   static const teams = [
-    {'name': 'Chennai Super Kings', 'short': 'CSK', 'color': 0xFFFDB913},
-    {'name': 'Mumbai Indians', 'short': 'MI', 'color': 0xFF004BA0},
-    {'name': 'Royal Challengers Bengaluru', 'short': 'RCB', 'color': 0xFFEC1C24},
-    {'name': 'Kolkata Knight Riders', 'short': 'KKR', 'color': 0xFF3A225D},
-    {'name': 'Rajasthan Royals', 'short': 'RR', 'color': 0xFFE73895},
-    {'name': 'Sunrisers Hyderabad', 'short': 'SRH', 'color': 0xFFFF822A},
-    {'name': 'Delhi Capitals', 'short': 'DC', 'color': 0xFF17479E},
-    {'name': 'Punjab Kings', 'short': 'PBKS', 'color': 0xFFED1C24},
-    {'name': 'Gujarat Titans', 'short': 'GT', 'color': 0xFF1C1C2B},
-    {'name': 'Lucknow Super Giants', 'short': 'LSG', 'color': 0xFF0057E2},
+    {'name': 'Chennai Super Kings', 'image': 'assets/logos/csk.png', 'color': 0xFFFDB913},
+    {'name': 'Mumbai Indians', 'image': 'assets/logos/mi.png', 'color': 0xFF004BA0},
+    {'name': 'Royal Challengers Bengaluru', 'image': 'assets/logos/rcb.png', 'color': 0xFFEC1C24},
+    {'name': 'Kolkata Knight Riders', 'image': 'assets/logos/kkr.png', 'color': 0xFF3A225D},
+    {'name': 'Rajasthan Royals', 'image': 'assets/logos/rr.png', 'color': 0xFFE73895},
+    {'name': 'Sunrisers Hyderabad', 'image': 'assets/logos/srh.png', 'color': 0xFFFF822A},
+    {'name': 'Delhi Capitals', 'image': 'assets/logos/dc.png', 'color': 0xFF17479E},
+    {'name': 'Punjab Kings', 'image': 'assets/logos/pbks.png', 'color': 0xFFED1C24},
+    {'name': 'Gujarat Titans', 'image': 'assets/logos/gt.png', 'color': 0xFF1C1C2B},
+    {'name': 'Lucknow Super Giants', 'image': 'assets/logos/lsg.png', 'color': 0xFF0057E2},
   ];
 
   @override
@@ -89,43 +89,43 @@ class _OnboardingScreenState extends State<OnboardingScreen>
       body: SafeArea(
         child: Column(
           children: [
-            const SizedBox(height: 48),
+            const SizedBox(height: 40),
             // Header
             const Text(
               '🏏',
-              style: TextStyle(fontSize: 56),
+              style: TextStyle(fontSize: 48),
             ),
             const SizedBox(height: 12),
             const Text(
               'IPL Fan Battle',
               style: TextStyle(
-                fontSize: 32,
+                fontSize: 28,
                 fontWeight: FontWeight.w900,
                 color: Color(0xFF1B5E20),
                 letterSpacing: -0.5,
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 4),
             Text(
               'Choose your favorite team',
               style: TextStyle(
-                fontSize: 16,
+                fontSize: 14,
                 color: Colors.grey.shade600,
                 fontWeight: FontWeight.w500,
               ),
             ),
-            const SizedBox(height: 40),
+            const SizedBox(height: 32),
 
             // Team Grid
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: GridView.builder(
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
-                    childAspectRatio: 2.4,
-                    crossAxisSpacing: 12,
-                    mainAxisSpacing: 12,
+                    childAspectRatio: 1.1,
+                    crossAxisSpacing: 16,
+                    mainAxisSpacing: 16,
                   ),
                   itemCount: teams.length,
                   itemBuilder: (context, index) {
@@ -138,44 +138,58 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                         HapticFeedback.selectionClick();
                         setState(() => _selectedTeam = team['name'] as String);
                       },
-                      child: Container(
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
                         decoration: BoxDecoration(
                           color: isSelected
-                              ? color.withValues(alpha: 0.1)
-                              : Colors.grey.shade50,
-                          borderRadius: BorderRadius.circular(12),
+                              ? color.withValues(alpha: 0.08)
+                              : Colors.white,
+                          borderRadius: BorderRadius.circular(20),
                           border: Border.all(
                             color: isSelected
                                 ? color
-                                : Colors.grey.shade200,
-                            width: isSelected ? 2 : 1,
+                                : Colors.grey.shade100,
+                            width: isSelected ? 3 : 1.5,
                           ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: isSelected 
+                                ? color.withValues(alpha: 0.1) 
+                                : Colors.black.withValues(alpha: 0.03),
+                              blurRadius: isSelected ? 12 : 6,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
                         ),
-                        child: Center(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                team['short'] as String,
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w900,
-                                  color: isSelected ? color : Colors.black87,
-                                ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            // Team Image
+                            Container(
+                              padding: const EdgeInsets.all(12),
+                              child: Image.asset(
+                                team['image'] as String,
+                                height: 64,
+                                width: 64,
+                                fit: BoxFit.contain,
                               ),
-                              Text(
+                            ),
+                            const SizedBox(height: 8),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 8),
+                              child: Text(
                                 team['name'] as String,
                                 style: TextStyle(
-                                  fontSize: 10,
-                                  color: Colors.grey.shade500,
-                                  fontWeight: FontWeight.w500,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w800,
+                                  color: isSelected ? color : Colors.black87,
                                 ),
                                 textAlign: TextAlign.center,
-                                maxLines: 1,
+                                maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
                     );
