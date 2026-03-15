@@ -20,7 +20,7 @@ class User(Base):
     correct_predictions = Column(Integer, default=0)
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 
-    votes = relationship("Vote", back_populates="user", lazy="selectin")
+    votes = relationship("Vote", back_populates="user", lazy="selectin", cascade="all, delete-orphan")
 
 
 class Poll(Base):
@@ -34,7 +34,7 @@ class Poll(Base):
     active = Column(Boolean, default=True, index=True)
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 
-    votes = relationship("Vote", back_populates="poll", lazy="selectin")
+    votes = relationship("Vote", back_populates="poll", lazy="selectin", cascade="all, delete-orphan")
 
 
 class Vote(Base):

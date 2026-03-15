@@ -121,6 +121,18 @@ async def publish_vote_update(poll_id: str, data: dict):
     except Exception as e:
         print(f"⚠️ Redis publish failed: {e}")
 
+async def publish_poll_deletion(poll_id: str):
+    if not redis_client:
+        return
+    try:
+        message = json.dumps({
+            "type": "poll_deleted",
+            "poll_id": poll_id
+        })
+        await redis_client.publish(VOTE_CHANNEL, message)
+    except Exception as e:
+        print(f"⚠️ Redis publish deletion failed: {e}")
+
 async def listen_for_votes():
     """Background task to listen for Pub/Sub messages and broadcast them."""
     if not redis_client:
@@ -139,11 +151,14 @@ async def listen_for_votes():
             if message["type"] == "message":
                 try:
                     payload = json.loads(message["data"])
-                    poll_id = payload.get("poll_id")
-                    data = payload.get("data")
-                    if poll_id and data:
-                        # Broadcast to LOCAL websockets connected to THIS instance
-                        await manager._local_broadcast(poll_id, data)
+                    if payload.get("type") == "poll_deleted":
+                        await manager._local_broadcast_deletion(payload.get("poll_id"))
+                    else:
+                        poll_id = payload.get("poll_id")
+                        data = payload.get("data")
+                        if poll_id and data:
+                            # Broadcast to LOCAL websockets connected to THIS instance
+                            await manager._local_broadcast(poll_id, data)
                 except Exception as e:
                     print(f"Error processing pubsub message: {e}")
     except asyncio.CancelledError:

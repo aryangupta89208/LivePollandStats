@@ -41,4 +41,19 @@ class ConnectionManager:
         for conn in dead_connections:
             self.disconnect(conn)
 
+    async def _local_broadcast_deletion(self, poll_id: str):
+        """Broadcast poll deletion to all clients."""
+        message = json.dumps({
+            "type": "poll_deleted",
+            "poll_id": poll_id
+        })
+        dead_connections = set()
+        for connection in self.active_connections:
+            try:
+                await connection.send_text(message)
+            except Exception:
+                dead_connections.add(connection)
+        for conn in dead_connections:
+            self.disconnect(conn)
+
 manager = ConnectionManager()

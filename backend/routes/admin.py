@@ -7,7 +7,7 @@ from database import get_db
 from models import Poll, Vote
 from schemas import CreatePollRequest, UpdatePollRequest, PollResponse
 from config import get_settings
-from redis_client import invalidate_poll_cache
+from redis_client import invalidate_poll_cache, publish_poll_deletion
 
 router = APIRouter(prefix="/admin", tags=["admin"])
 settings = get_settings()
@@ -82,6 +82,7 @@ async def delete_poll(
     await db.delete(poll)
     await db.commit()
     await invalidate_poll_cache(str(poll_id))
+    await publish_poll_deletion(str(poll_id))
     return {"id": str(poll_id), "deleted": True}
 
 

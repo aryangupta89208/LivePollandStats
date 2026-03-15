@@ -81,6 +81,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             }
           }
         });
+      } else if (data['type'] == 'poll_deleted' && mounted) {
+        final pollId = data['poll_id'];
+        setState(() {
+          _polls.removeWhere((p) => p.id == pollId);
+        });
       }
     });
   }
