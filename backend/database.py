@@ -67,6 +67,10 @@ async def init_db():
             print(f"📡 Connecting to database ({db_host})... (Attempt {attempt}/{max_retries})")
             async with engine.begin() as conn:
                 await conn.run_sync(Base.metadata.create_all)
+                
+                # Patch for existing tables that might be missing display_name
+                from sqlalchemy import text
+                await conn.execute(text("ALTER TABLE users ADD COLUMN IF NOT EXISTS display_name VARCHAR(100) DEFAULT 'Anonymous' NOT NULL;"))
             
             # Auto-seed if empty
             try:

@@ -57,6 +57,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.exception_handler(Exception)
+async def global_exception_handler(request, exc):
+    import traceback
+    trace = traceback.format_exc()
+    print(f"🔥 GLOBAL ERROR: {exc}\n{trace}")
+    from fastapi.responses import JSONResponse
+    return JSONResponse(
+        status_code=500,
+        content={"detail": f"Server Error: {str(exc)}\n{trace[:100]}..."},
+    )
+
 # Include API routes
 app.include_router(auth_router)
 app.include_router(polls_router)

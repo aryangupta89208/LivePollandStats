@@ -63,9 +63,13 @@ class _OnboardingScreenState extends State<OnboardingScreen>
         deviceId = const Uuid().v4();
       }
       
-      final nickname = _nameController.text.trim().isEmpty 
-          ? 'Fan_${deviceId.substring(0, 5)}' 
-          : _nameController.text.trim();
+      final nickname = _nameController.text.trim();
+      if (nickname.isEmpty) {
+        throw Exception('Please enter a nickname to continue');
+      }
+      if (nickname.length < 3) {
+        throw Exception('Nickname must be at least 3 characters');
+      }
           
       final user = await ApiService.signup(
         deviceId, 
@@ -246,7 +250,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                 width: double.infinity,
                 height: 56,
                 child: ElevatedButton(
-                  onPressed: _selectedTeam != null && !_isLoading ? _continue : null,
+                  onPressed: _selectedTeam != null && !_isLoading && _nameController.text.trim().isNotEmpty ? _continue : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF2E7D32),
                     disabledBackgroundColor: Colors.grey.shade200,

@@ -11,28 +11,34 @@ router = APIRouter(tags=["auth"])
 @router.post("/signup", response_model=UserResponse)
 async def signup(req: SignupRequest, db: AsyncSession = Depends(get_db)):
     """Register or login via device_id. Returns existing user if already registered."""
-    result = await db.execute(select(User).where(User.device_id == req.device_id))
-    user = result.scalar_one_or_none()
+    try:
+        result = await db.execute(select(User).where(User.device_id == req.device_id))
+        user = result.scalar_one_or_none()
 
-    if user:
-        if user.favorite_team != req.favorite_team:
-            user.favorite_team = req.favorite_team
-        if req.display_name and user.display_name != req.display_name:
-            user.display_name = req.display_name
+        if user:
+            if user.favorite_team != req.favorite_team:
+                user.favorite_team = req.favorite_team
+            if req.display_name and user.display_name != req.display_name:
+                user.display_name = req.display_name
+            await db.commit()
+            await db.refresh(user)
+            return _build_user_response(user)
+
+        display_name = req.display_name or f"Fan_{req.device_id[:6]}"
+        user = User(
+            device_id=req.device_id, 
+            favorite_team=req.favorite_team,
+            display_name=display_name
+        )
+        db.add(user)
         await db.commit()
         await db.refresh(user)
         return _build_user_response(user)
-
-    display_name = req.display_name or f"Fan_{req.device_id[:6]}"
-    user = User(
-        device_id=req.device_id, 
-        favorite_team=req.favorite_team,
-        display_name=display_name
-    )
-    db.add(user)
-    await db.commit()
-    await db.refresh(user)
-    return _build_user_response(user)
+    except Exception as e:
+        import traceback
+        trace = traceback.format_exc()
+        print(f"❌ SIGNUP ERROR: {e}\n{trace}")
+        raise HTTPException(status_code=500, detail=f"Signup failed: {str(e)}\n{trace[:200]}...")
 
 
 @router.get("/user/{device_id}", response_model=UserResponse)
