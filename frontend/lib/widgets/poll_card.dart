@@ -68,7 +68,8 @@ class _PollCardState extends State<PollCard>
       child: SlideTransition(
         position: _slideAnimation,
         child: GestureDetector(
-          onTap: widget.onTap,
+          onTap: hasVoted ? widget.onTap : null,
+          behavior: HitTestBehavior.opaque,
           child: Container(
             margin: const EdgeInsets.only(bottom: 16),
             padding: const EdgeInsets.all(20),

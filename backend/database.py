@@ -21,19 +21,23 @@ db_host = database_url.split("@")[-1].split("/")[0] if "@" in database_url else 
 # Basic SQLAlchemy pool settings
 engine_args = {
     "echo": False,
-    "pool_size": 10,       # Reduced to prevent overwhelming the pooler
-    "max_overflow": 5,     # Reduced max burst
+    "pool_size": 20,       # Increased to handle more users
+    "max_overflow": 10,    # Increased burst capacity
     "pool_pre_ping": True, # Keep connection health checks
+    "pool_recycle": 1800,  # Recycle connections every 30 mins
+    "pool_timeout": 30,    # Timeout for getting a connection from the pool
     "connect_args": {
         # Supavisor/PgBouncer Transaction mode doesn't support session-level prepared statements
         "prepared_statement_cache_size": 0,
         "statement_cache_size": 0,
         "prepared_statement_name_func": lambda *args: f"__asyncpg_{uuid.uuid4().hex}__",
+        "command_timeout": 60, # Prevent long-running queries from hanging
     }
 }
 
 if "localhost" not in database_url:
-    # Use 'require' mode for asyncpg to work with Supabase poolers
+    # Use 'require' for asyncpg to work with Supabase poolers
+    # Some environments prefer True, but Port 6543 usually likes 'require'
     engine_args["connect_args"]["ssl"] = "require"
 
 print(f"🛠️  Engine initialized for host: {db_host}")

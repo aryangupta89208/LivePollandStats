@@ -111,7 +111,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           poll.percentageA = updated.percentageA;
           poll.percentageB = updated.percentageB;
         });
-        });
       }
     } catch (e) {
       // ❌ Revert on failure
