@@ -1,3 +1,4 @@
+import json
 import redis.asyncio as redis
 from config import get_settings
 
@@ -44,63 +45,81 @@ async def increment_vote(poll_id: str, vote: str) -> None:
     """Increment vote counter in Redis."""
     if not redis_client:
         return
-    key = f"poll:{poll_id}:{vote}"
-    await redis_client.incr(key)
-    # Also update total
-    await redis_client.incr(f"poll:{poll_id}:total")
+    try:
+        key = f"poll:{poll_id}:{vote}"
+        await redis_client.incr(key)
+        # Also update total
+        await redis_client.incr(f"poll:{poll_id}:total")
+    except Exception as e:
+        print(f"⚠️ Redis increment failed: {e}")
 
 
 async def get_vote_counts(poll_id: str) -> dict:
     """Get cached vote counts for a poll."""
     if not redis_client:
         return None
-    pipe = redis_client.pipeline()
-    pipe.get(f"poll:{poll_id}:a")
-    pipe.get(f"poll:{poll_id}:b")
-    pipe.get(f"poll:{poll_id}:total")
-    results = await pipe.execute()
-    
-    votes_a = int(results[0] or 0)
-    votes_b = int(results[1] or 0)
-    total = int(results[2] or 0)
-    
-    if total == 0:
-        return None  # Cache miss, need to load from DB
-    
-    return {"votes_a": votes_a, "votes_b": votes_b, "total": total}
+    try:
+        pipe = redis_client.pipeline()
+        pipe.get(f"poll:{poll_id}:a")
+        pipe.get(f"poll:{poll_id}:b")
+        pipe.get(f"poll:{poll_id}:total")
+        results = await pipe.execute()
+        
+        votes_a = int(results[0] or 0)
+        votes_b = int(results[1] or 0)
+        total = int(results[2] or 0)
+        
+        if total == 0:
+            return None  # Cache miss, need to load from DB
+        
+        return {"votes_a": votes_a, "votes_b": votes_b, "total": total}
+    except Exception as e:
+        print(f"⚠️ Redis get_counts failed: {e}")
+        return None
 
 
 async def sync_poll_to_redis(poll_id: str, votes_a: int, votes_b: int) -> None:
     """Sync DB vote counts to Redis."""
     if not redis_client:
         return
-    pipe = redis_client.pipeline()
-    pipe.set(f"poll:{poll_id}:a", votes_a)
-    pipe.set(f"poll:{poll_id}:b", votes_b)
-    pipe.set(f"poll:{poll_id}:total", votes_a + votes_b)
-    await pipe.execute()
+    try:
+        pipe = redis_client.pipeline()
+        pipe.set(f"poll:{poll_id}:a", votes_a)
+        pipe.set(f"poll:{poll_id}:b", votes_b)
+        pipe.set(f"poll:{poll_id}:total", votes_a + votes_b)
+        await pipe.execute()
+    except Exception as e:
+        print(f"⚠️ Redis sync failed: {e}")
 
 
 async def invalidate_poll_cache(poll_id: str) -> None:
     """Remove poll from cache."""
     if not redis_client:
         return
-    pipe = redis_client.pipeline()
-    pipe.delete(f"poll:{poll_id}:a")
-    pipe.delete(f"poll:{poll_id}:b")
-    pipe.delete(f"poll:{poll_id}:total")
-    await pipe.execute()
+    try:
+        pipe = redis_client.pipeline()
+        pipe.delete(f"poll:{poll_id}:a")
+        pipe.delete(f"poll:{poll_id}:b")
+        pipe.delete(f"poll:{poll_id}:total")
+        await pipe.execute()
+    except Exception as e:
+        print(f"⚠️ Redis invalidate failed: {e}")
+
+
 # Pub/Sub Channel Name
 VOTE_CHANNEL = "vote_updates"
 
 async def publish_vote_update(poll_id: str, data: dict):
     if not redis_client:
         return
-    message = json.dumps({
-        "poll_id": poll_id,
-        "data": data
-    })
-    await redis_client.publish(VOTE_CHANNEL, message)
+    try:
+        message = json.dumps({
+            "poll_id": poll_id,
+            "data": data
+        })
+        await redis_client.publish(VOTE_CHANNEL, message)
+    except Exception as e:
+        print(f"⚠️ Redis publish failed: {e}")
 
 async def listen_for_votes():
     """Background task to listen for Pub/Sub messages and broadcast them."""
@@ -119,7 +138,6 @@ async def listen_for_votes():
         async for message in pubsub.listen():
             if message["type"] == "message":
                 try:
-                    import json
                     payload = json.loads(message["data"])
                     poll_id = payload.get("poll_id")
                     data = payload.get("data")
