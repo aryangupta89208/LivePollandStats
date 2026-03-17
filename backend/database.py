@@ -24,13 +24,14 @@ engine_args = {
     "pool_size": 20,       # Increased to handle more users
     "max_overflow": 10,    # Increased burst capacity
     "pool_pre_ping": True, # Keep connection health checks
-    "pool_recycle": 1800,  # Recycle connections every 30 mins
-    "pool_timeout": 30,    # Timeout for getting a connection from the pool
+    "pool_recycle": 300,   # Recycle connections every 5 mins to fix drops
+    "pool_timeout": 30,    # Wait up to 30s before failing if pool is empty
     "connect_args": {
         # Supavisor/PgBouncer Transaction mode doesn't support session-level prepared statements
         "prepared_statement_cache_size": 0,
         "statement_cache_size": 0,
         "prepared_statement_name_func": lambda *args: f"__asyncpg_{uuid.uuid4().hex}__",
+        "timeout": 15,         # Fast fail on network hang during connect
         "command_timeout": 60, # Prevent long-running queries from hanging
     }
 }
